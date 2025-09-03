@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
+  <!-- Custom Styles -->
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .sidebar {
+      height: 100vh;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      background: #1f1f1f;
+      transition: all 0.3s ease;
+      padding-top: 60px;
+      z-index: 1000;
+    }
+    .sidebar.active {
+      left: 0;
+    }
+    .sidebar a {
+      display: block;
+      padding: 12px 20px;
+      color: #bbb;
+      text-decoration: none;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #333;
+      color: #fff;
+    }
+    #content {
+      margin-left: 0;
+      transition: all 0.3s;
+      padding: 20px;
+    }
+    #content.active {
+      margin-left: 250px;
+    }
+    .navbar-dark {
+      background-color: #1c1c1c;
+    }
+    .card {
+      background-color: #1f1f1f;
+      border: none;
+      border-radius: 12px;
+      color: #e0e0e0;
+    }
+    .table {
+      color: #e0e0e0;
+    }
+    .table thead {
+      background: #2a2a2a;
+    }
+    .logout-btn {
+      position: absolute;
+      bottom: 20px;
+      width: 90%;
+      left: 5%;
+    }
+    .file-upload-container {
+      border: 2px dashed #555;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .file-upload-container:hover {
+      border-color: #00d4ff;
+      background-color: #2a2a2a;
+    }
+    .file-upload-container.dragover {
+      border-color: #00ff99;
+      background-color: #2a2a2a;
+    }
+    .preview-container {
+      margin-top: 15px;
+      display: none;
+    }
+    .preview-image {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+    }
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #2a2a2a;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .payment-method:hover, .payment-method.selected {
+      background: #333;
+      outline: 2px solid #00d4ff;
+    }
+    .payment-method img {
+      height: 30px;
+      width: auto;
+    }
+  </style>
+</head>
+<body id="dashboardPage">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark shadow-sm">
+    <div class="container-fluid">
+      <button class="btn btn-outline-light" id="toggleSidebar">
+        <i class="bi bi-list"></i>
+      </button>
+      <span class="navbar-brand mb-0 h1">User Dashboard</span>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <a class="active" data-bs-toggle="tab" href="#profileTab"><i class="bi bi-person"></i> Profile</a>
+    <a data-bs-toggle="tab" href="#depositTab"><i class="bi bi-wallet2"></i> Deposit</a>
+    <a data-bs-toggle="tab" href="#withdrawTab"><i class="bi bi-bank"></i> Withdraw</a>
+    <a data-bs-toggle="tab" href="#referralsTab"><i class="bi bi-people"></i> Referrals</a>
+    <a data-bs-toggle="tab" href="#messagesTab"><i class="bi bi-chat-dots"></i> Messages</a>
+    <a data-bs-toggle="tab" href="#transactionsTab"><i class="bi bi-cash-stack"></i> Transactions</a>
+    <a data-bs-toggle="tab" href="#plansTab"><i class="bi bi-box-seam"></i> Plans</a>
+    <a data-bs-toggle="tab" href="#tradersTab"><i class="bi bi-graph-up"></i> Copy Traders</a>
+    <button class="btn btn-danger logout-btn" onclick="Auth.logout()">
+      <i class="bi bi-box-arrow-right"></i> Logout
+    </button>
+  </div>
+
+  <!-- Main Content with Tabs -->
+  <div id="content" class="container-fluid mt-3">
+    <div class="tab-content">
+
+      <!-- Profile Tab -->
+      <div class="tab-pane fade show active" id="profileTab">
+        <div class="card p-3 shadow mb-4">
+          <h4>Welcome, <span id="userName"></span></h4>
+          <p>Email: <span id="userEmail"></span></p>
+          <p>Wallet Balance: <span id="walletBalance"></span></p>
+          <p>Referral Code: <span id="referralCode"></span></p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <div class="card text-center p-3 shadow-sm">
+              <h6>Total Balance</h6>
+              <h4>$<span id="walletBalanceCard">0</span></h4>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center p-3 shadow-sm">
+              <h6>Total Deposits</h6>
+              <h4>$<span id="totalDeposits">0</span></h4>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center p-3 shadow-sm">
+              <h6>Total Withdrawals</h6>
+              <h4>$<span id="totalWithdrawals">0</span></h4>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center p-3 shadow-sm">
+              <h6>Referrals</h6>
+              <h4><span id="referralCount">0</span></h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+              <h6>Deposits vs Withdrawals</h6>
+              <canvas id="transactionsChart"></canvas>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+              <h6>Profit Growth</h6>
+              <canvas id="profitChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="card p-3 shadow-sm mt-4">
+          <h6>Recent Transactions</h6>
+          <table class="table table-dark table-sm">
+            <thead>
+              <tr>
+                <th>Date</th><th>Type</th><th>Amount</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="recentTransactions">
+              <tr><td>2025-09-01</td><td>Deposit</td><td>$500</td><td>Approved</td></tr>
+              <tr><td>2025-09-02</td><td>Profit</td><td>$200</td><td>Credited</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card p-3 shadow-sm mt-4">
+          <h6>Notifications</h6>
+          <ul class="list-group list-group-flush" id="notificationsList">
+            <li class="list-group-item bg-dark text-light">Deposit of $500 approved ✅</li>
+            <li class="list-group-item bg-dark text-light">Profit of $200 added 📈</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Referrals Tab -->
+      <div class="tab-pane fade" id="referralsTab">
+        <div class="card p-3 shadow">
+          <h5>Referrals</h5>
+          <ul id="referralsList" class="list-group list-group-flush"></ul>
+        </div>
+      </div>
+
+      <!-- Messages Tab -->
+      <div class="tab-pane fade" id="messagesTab">
+        <div class="card p-3 shadow">
+          <h5>Messages</h5>
+          <ul id="messagesList" class="list-group list-group-flush"></ul>
+        </div>
+      </div>
+
+      <!-- Transactions Tab -->
+      <div class="tab-pane fade" id="transactionsTab">
+        <div class="card p-3 shadow">
+          <h5>Transactions</h5>
+          <div class="table-responsive">
+            <table class="table table-dark table-hover" id="transactionsTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plans Tab -->
+      <div class="tab-pane fade" id="plansTab">
+        <div class="card p-3 shadow">
+          <h5>Plans</h5>
+          <div class="row" id="plansList"></div>
+        </div>
+      </div>
+
+      <!-- Traders Tab -->
+      <div class="tab-pane fade" id="tradersTab">
+        <div class="card p-3 shadow">
+          <h5>Copy Traders</h5>
+          <div class="row" id="tradersList"></div>
+        </div>
+      </div>
+
+      <!-- Deposit Tab -->
+      <div class="tab-pane fade" id="depositTab">
+        <div class="card p-3 shadow">
+          <h5>Make a Deposit</h5>
+          <form id="depositForm" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label">Amount ($)</label>
+              <input type="number" class="form-control" name="amount" min="10" step="0.01" required>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Payment Method</label>
+              <div id="paymentMethods">
+                <div class="payment-method" data-method="bank">
+                  <input type="radio" name="paymentMethod" value="bank" required>
+                  <i class="bi bi-bank fs-4"></i>
+                  <span>Bank Transfer</span>
+                </div>
+                <div class="payment-method" data-method="bitcoin">
+                  <input type="radio" name="paymentMethod" value="bitcoin">
+                  <i class="bi bi-currency-bitcoin fs-4"></i>
+                  <span>Bitcoin</span>
+                </div>
+                <div class="payment-method" data-method="ethereum">
+                  <input type="radio" name="paymentMethod" value="ethereum">
+                  <i class="bi bi-currency-ethereum fs-4"></i>
+                  <span>Ethereum</span>
+                </div>
+                <div class="payment-method" data-method="usdt">
+                  <input type="radio" name="paymentMethod" value="usdt">
+                  <i class="bi bi-wallet fs-4"></i>
+                  <span>USDT</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3" id="cryptoAddress" style="display: none;">
+              <label class="form-label">Wallet Address</label>
+              <input type="text" class="form-control" name="walletAddress" placeholder="Enter your wallet address">
+              <div class="form-text text-warning">Make sure to use the correct address for the selected cryptocurrency</div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Upload Proof of Payment</label>
+              <div class="file-upload-container" id="dropZone">
+                <i class="bi bi-cloud-upload fs-1"></i>
+                <p>Drag & drop your proof file here or click to browse</p>
+                <p class="text-muted">Supported formats: JPG, PNG, PDF (Max 5MB)</p>
+                <input type="file" class="d-none" id="proofFile" name="proof" accept="image/*,.pdf" required>
+              </div>
+              <div class="preview-container" id="previewContainer">
+                <img src="" class="preview-image" id="previewImage">
+                <div id="fileName" class="mt-2"></div>
+                <button type="button" class="btn btn-sm btn-danger mt-2" id="removeFile">Remove File</button>
+              </div>
+            </div>
+            
+            <button type="submit" class="btn btn-success" id="depositSubmit">
+              <i class="bi bi-send"></i> Submit Deposit Request
+            </button>
+          </form>
+          <div id="depositStatus" class="mt-3 alert alert-info" style="display: none;"></div>
+        </div>
+        
+        <!-- Deposit Instructions -->
+        <div class="card p-3 shadow mt-4">
+          <h5>Deposit Instructions</h5>
+          <div id="bankInstructions" class="method-instructions">
+            <p>1. Transfer funds to our bank account:</p>
+            <p class="ms-3">Bank: Global Investment Bank<br>
+               Account: 1234567890<br>
+               Routing: 021000021<br>
+               SWIFT: GLBINVUS</p>
+            <p>2. Upload a screenshot of your transfer confirmation</p>
+          </div>
+          <div id="cryptoInstructions" class="method-instructions" style="display: none;">
+            <p>1. Send cryptocurrency to the address below:</p>
+            <p class="ms-3 text-warning" id="cryptoAddressDisplay">Please select a cryptocurrency method first</p>
+            <p>2. Upload a screenshot of your transaction confirmation</p>
+            <p class="text-danger">Note: Transactions may take up to 30 minutes to confirm</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Withdraw Tab -->
+      <div class="tab-pane fade" id="withdrawTab">
+        <div class="card p-3 shadow">
+          <h5>Request Withdrawal</h5>
+          <form id="withdrawForm">
+            <div class="mb-3">
+              <label class="form-label">Amount ($)</label>
+              <input type="number" class="form-control" name="amount" min="10" step="0.01" required>
+              <div class="form-text">Available balance: $<span id="availableBalance">0</span></div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Withdrawal Method</label>
+              <select class="form-select" name="withdrawMethod" required>
+                <option value="">Select method</option>
+                <option value="bank">Bank Transfer</option>
+                <option value="paypal">PayPal</option>
+                <option value="bitcoin">Bitcoin</option>
+                <option value="ethereum">Ethereum</option>
+                <option value="usdt">USDT</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Account Details</label>
+              <textarea class="form-control" name="accountDetails" rows="3" placeholder="Enter your account/wallet details" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-warning">
+              <i class="bi bi-cash-coin"></i> Request Withdrawal
+            </button>
+          </form>
+          <div id="withdrawStatus" class="mt-3 alert alert-info" style="display: none;"></div>
+        </div>
+        
+        <!-- Withdrawal Information -->
+        <div class="card p-3 shadow mt-4">
+          <h5>Withdrawal Policy</h5>
+          <ul>
+            <li>Minimum withdrawal: $10</li>
+            <li>Processing time: 1-3 business days</li>
+            <li>Bank transfers may take 3-5 business days</li>
+            <li>Crypto withdrawals are processed within 24 hours</li>
+            <li>Fees may apply depending on the withdrawal method</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    // Sidebar Toggle
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("content");
+    document.getElementById("toggleSidebar").addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+      content.classList.toggle("active");
+    });
+
+    // Active link + auto-close sidebar when item clicked
+    const sidebarLinks = document.querySelectorAll(".sidebar a[data-bs-toggle='tab']");
+    sidebarLinks.forEach(link => {
+      link.addEventListener("click", () => {
+        sidebarLinks.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+
+        // auto close sidebar (optional)
+        sidebar.classList.remove("active");
+        content.classList.remove("active");
+      });
+    });
+
+    // Payment Method Selection
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    const cryptoAddressField = document.getElementById('cryptoAddress');
+    const bankInstructions = document.getElementById('bankInstructions');
+    const cryptoInstructions = document.getElementById('cryptoInstructions');
+    
+    paymentMethods.forEach(method => {
+      method.addEventListener('click', () => {
+        // Select the radio button
+        const radio = method.querySelector('input[type="radio"]');
+        radio.checked = true;
+        
+        // Update UI
+        paymentMethods.forEach(m => m.classList.remove('selected'));
+        method.classList.add('selected');
+        
+        // Show/hide crypto address field
+        const isCrypto = ['bitcoin', 'ethereum', 'usdt'].includes(radio.value);
+        cryptoAddressField.style.display = isCrypto ? 'block' : 'none';
+        
+        // Show appropriate instructions
+        bankInstructions.style.display = radio.value === 'bank' ? 'block' : 'none';
+        cryptoInstructions.style.display = isCrypto ? 'block' : 'none';
+        
+        // Update crypto address display
+        if (isCrypto) {
+          const addresses = {
+            bitcoin: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+            ethereum: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+            usdt: 'TYqg6Wr1oFgSSERd9s1VnJ7JwSJq2o8C2k'
+          };
+          document.getElementById('cryptoAddressDisplay').textContent = addresses[radio.value];
+        }
+      });
+    });
+
+    // File Upload Handling
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('proofFile');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    const fileName = document.getElementById('fileName');
+    const removeFileBtn = document.getElementById('removeFile');
+    
+    // Click on dropzone to trigger file input
+    dropZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+    
+    // Prevent default behavior for drag events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Highlight drop zone when file is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      dropZone.classList.add('dragover');
+    }
+    
+    function unhighlight() {
+      dropZone.classList.remove('dragover');
+    }
+    
+    // Handle dropped files
+    dropZone.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      handleFiles(files);
+    }
+    
+    // Handle file input change
+    fileInput.addEventListener('change', () => {
+      handleFiles(fileInput.files);
+    });
+    
+    function handleFiles(files) {
+      if (files.length > 0) {
+        const file = files[0];
+        
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('File is too large. Maximum size is 5MB.');
+          return;
+        }
+        
+        // Check file type
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+          alert('Only JPG, PNG, and PDF files are allowed.');
+          return;
+        }
+        
+        // Display file name
+        fileName.textContent = file.name;
+        
+        // Preview image if it's an image file
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          // For PDF files, show a PDF icon
+          previewImage.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBmaWxsPSIjZmY1NTIyIiBkPSJTTDQwIDQySDhWNmgxNHY4aDh2Mjh6Ii8+PHBhdGggZmlsbD0iI2NjYyIgZD0iTTM4IDQySDZWNmgxMHY4aDh2Mjh6Ii8+PHBhdGggZmlsbD0iI2YxZjFmMSIgZD0iTTM4IDE0SDI0VjZ6Ii8+PHBhdGggZmlsbD0iI2Y1NWUwMCIgZD0iTTI0IDZMMzggMTRIMjRWNnoiLz48cGF0aCBmaWxsPSIjZmY1NTIyIiBkPSJNMTcuNSAyNmgtM3YtMi41aDNWNjZtNC41LTIuNWgtM1YyM2gzVjY2bTQuNS0yLjVIMjNWMTloM1Y2NiIvPjwvc3ZnPg==';
+          previewContainer.style.display = 'block';
+        }
+      }
+    }
+    
+    // Remove file
+    removeFileBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      previewContainer.style.display = 'none';
+    });
+
+    // Handle Deposit Form
+    document.getElementById("depositForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = document.getElementById('depositSubmit');
+      const statusDiv = document.getElementById('depositStatus');
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+      
+      try {
+        const formData = new FormData(form);
+        
+        // Simulate API call (replace with actual API endpoint)
+        // const res = await fetch("/api/deposits", {
+        //   method: "POST",
+        //   headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+        //   body: formData
+        // });
+        // const data = await res.json();
+        
+        // Simulate success response
+        setTimeout(() => {
+          statusDiv.textContent = "Deposit request submitted successfully. It will be processed within 24 hours.";
+          statusDiv.className = "mt-3 alert alert-success";
+          statusDiv.style.display = "block";
+          form.reset();
+          previewContainer.style.display = "none";
+          
+          // Reset button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="bi bi-send"></i> Submit Deposit Request';
+          
+          // Reload dashboard data
+          if (typeof Dashboard !== 'undefined' && typeof Dashboard.load === 'function') {
+            Dashboard.load();
+          }
+        }, 1500);
+      } catch (err) {
+        statusDiv.textContent = "Error submitting deposit: " + err.message;
+        statusDiv.className = "mt-3 alert alert-danger";
+        statusDiv.style.display = "block";
+        
+        // Reset button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="bi bi-send"></i> Submit Deposit Request';
+      }
+    });
+
+    // Handle Withdrawal Form
+    document.getElementById("withdrawForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const statusDiv = document.getElementById('withdrawStatus');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+      
+      try {
+        const formData = {
+          amount: form.amount.value,
+          method: form.withdrawMethod.value,
+          accountDetails: form.accountDetails.value
+        };
+        
+        // Simulate API call (replace with actual API endpoint)
+        // const res = await fetch("/api/withdrawals", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: "Bearer " + localStorage.getItem("token")
+        //   },
+        //   body: JSON.stringify(formData)
+        // });
+        // const data = await res.json();
+        
+        // Simulate success response
+        setTimeout(() => {
+          statusDiv.textContent = "Withdrawal request submitted successfully. It will be processed within 1-3 business days.";
+          statusDiv.className = "mt-3 alert alert-success";
+          statusDiv.style.display = "block";
+          form.reset();
+          
+          // Reset button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="bi bi-cash-coin"></i> Request Withdrawal';
+          
+          // Reload dashboard data
+          if (typeof Dashboard !== 'undefined' && typeof Dashboard.load === 'function') {
+            Dashboard.load();
+          }
+        }, 1500);
+      } catch (err) {
+        statusDiv.textContent = "Error submitting withdrawal: " + err.message;
+        statusDiv.className = "mt-3 alert alert-danger";
+        statusDiv.style.display = "block";
+        
+        // Reset button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="bi bi-cash-coin"></i> Request Withdrawal';
+      }
+    });
+
+    // Initialize dashboard if Dashboard object exists
+    if (typeof Dashboard !== 'undefined') {
+      document.addEventListener("DOMContentLoaded", function() {
+        // Set available balance for withdrawal form
+        const walletBalance = document.getElementById('walletBalanceCard').textContent;
+        document.getElementById('availableBalance').textContent = walletBalance;
+        
+        // Load dashboard data
+        Dashboard.load();
+      });
+    }
+  </script>
+
+  <!-- Dashboard Logic -->
+  <script>
+    const Dashboard = {};
+
+    // === LOAD DASHBOARD DATA ===
+    Dashboard.load = async function () {
+      try {
+        // Simulate API response (replace with actual API call)
+        const data = {
+          user: {
+            name: "John Doe",
+            email: "john.doe@example.com",
+            walletBalance: "1250.75",
+            referralCode: "REF12345"
+          },
+          totals: {
+            deposits: "2500",
+            withdrawals: "1249.25",
+            profits: "500"
+          },
+          referrals: [
+            { email: "friend1@example.com", createdAt: "2025-08-15" },
+            { email: "friend2@example.com", createdAt: "2025-08-20" }
+          ],
+          transactions: [
+            { date: "2025-09-01", type: "Deposit", amount: "500", status: "Approved" },
+            { date: "2025-09-02", type: "Profit", amount: "200", status: "Credited" },
+            { date: "2025-08-28", type: "Withdrawal", amount: "300", status: "Completed" }
+          ],
+          notifications: [
+            { message: "Deposit of $500 approved", date: "2025-09-01T10:30:00" },
+            { message: "Profit of $200 added", date: "2025-09-02T09:15:00" }
+          ],
+          messages: [
+            { title: "Welcome", body: "Thank you for joining our platform!" },
+            { title: "New Investment Plan", body: "Check out our new premium plan with higher returns" }
+          ],
+          chart: {
+            months: ["Jan", "Feb", "Mar", "Apr", "May"],
+            deposits: [500, 800, 1200, 900, 1500],
+            withdrawals: [200, 400, 600, 300, 800],
+            profits: [100, 300, 500, 700, 1200]
+          }
+        };
+
+        // --- Profile Info ---
+        document.getElementById("userName").innerText = data.user.name;
+        document.getElementById("userEmail").innerText = data.user.email;
+        document.getElementById("walletBalance").innerText = `$${data.user.walletBalance}`;
+        document.getElementById("walletBalanceCard").innerText = data.user.walletBalance;
+        document.getElementById("availableBalance").textContent = data.user.walletBalance;
+        document.getElementById("referralCode").innerText = data.user.referralCode;
+
+        // --- Summary Cards ---
+        document.getElementById("totalDeposits").innerText = data.totals.deposits;
+        document.getElementById("totalWithdrawals").innerText = data.totals.withdrawals;
+        document.getElementById("referralCount").innerText = data.referrals.length;
+
+        // --- Recent Transactions ---
+        document.getElementById("recentTransactions").innerHTML = data.transactions
+          .slice(0, 5)
+          .map(
+            t =>
+              `<tr>
+                <td>${new Date(t.date).toLocaleDateString()}</td>
+                <td>${t.type}</td>
+                <td>$${t.amount}</td>
+                <td>${t.status}</td>
+              </tr>`
+          )
+          .join("");
+
+        // --- Transactions Table ---
+        document.querySelector("#transactionsTable tbody").innerHTML = data.transactions
+          .map(
+            t =>
+              `<tr>
+                <td>${new Date(t.date).toLocaleDateString()}</td>
+                <td>${t.type}</td>
+                <td>$${t.amount}</td>
+                <td>${t.status}</td>
+              </tr>`
+          )
+          .join("");
+
+        // --- Notifications ---
+        document.getElementById("notificationsList").innerHTML = data.notifications
+          .map(
+            n =>
+              `<li class="list-group-item bg-dark text-light">
+                ${n.message} <small class="text-muted">(${new Date(n.date).toLocaleString()})</small>
+              </li>`
+          )
+          .join("");
+
+        // --- Referrals ---
+        Dashboard.renderReferrals({ referrals: data.referrals });
+
+        // --- Messages ---
+        Dashboard.renderMessages(data.messages);
+
+        // --- Update Charts ---
+        Dashboard.updateCharts(data);
+      } catch (err) {
+        console.error("Error loading dashboard:", err);
+      }
+    };
+
+    // === UPDATE CHARTS ===
+    Dashboard.updateCharts = function (data) {
+      // Destroy old charts if exist
+      if (Dashboard.txChart) Dashboard.txChart.destroy();
+      if (Dashboard.profitChart) Dashboard.profitChart.destroy();
+
+      const ctx1 = document.getElementById("transactionsChart").getContext("2d");
+      Dashboard.txChart = new Chart(ctx1, {
+        type: "bar",
+        data: {
+          labels: data.chart.months,
+          datasets: [
+            { label: "Deposits", data: data.chart.deposits, backgroundColor: "#00d4ff" },
+            { label: "Withdrawals", data: data.chart.withdrawals, backgroundColor: "#ff6b6b" }
+          ]
+        },
+        options: {
+          plugins: {
+            legend: {
+              labels: {
+                color: '#e0e0e0'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#e0e0e0'
+              },
+              grid: {
+                color: '#333'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#e0e0e0'
+              },
+              grid: {
+                color: '#333'
+              }
+            }
+          }
+        }
+      });
+
+      const ctx2 = document.getElementById("profitChart").getContext("2d");
+      Dashboard.profitChart = new Chart(ctx2, {
+        type: "line",
+        data: {
+          labels: data.chart.months,
+          datasets: [
+            { 
+              label: "Profit", 
+              data: data.chart.profits, 
+              borderColor: "#00ff99", 
+              fill: false,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          plugins: {
+            legend: {
+              labels: {
+                color: '#e0e0e0'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#e0e0e0'
+              },
+              grid: {
+                color: '#333'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#e0e0e0'
+              },
+              grid: {
+                color: '#333'
+              }
+            }
+          }
+        }
+      });
+    };
+
+    // === RENDER HELPERS ===
+    Dashboard.renderReferrals = function(refs) {
+      document.getElementById("referralsList").innerHTML = refs.referrals
+        .map(r => `<li class="list-group-item bg-dark text-light">${r.email} - Joined ${new Date(r.createdAt).toLocaleDateString()}</li>`)
+        .join("");
+    };
+
+    Dashboard.renderMessages = function(msgs) {
+      document.getElementById("messagesList").innerHTML = msgs
+        .map(m => `<li class="list-group-item bg-dark text-light"><b>${m.title}:</b> ${m.body}</li>`)
+        .join("");
+    };
+
+    // === AUTO LOAD DASHBOARD ON PAGE LOAD ===
+    document.addEventListener("DOMContentLoaded", Dashboard.load);
+  </script>
+
+</body>
+</html>

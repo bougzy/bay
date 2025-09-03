@@ -1,0 +1,21 @@
+/* style.css - dark theme */
+:root{
+  --bg:#0f1115;
+  --panel:#1b1d22;
+  --muted:#9aa0a6;
+  --accent:#3b82f6;
+}
+body { background: var(--bg); color:#e6eef8; font-family: Inter, system-ui, sans-serif; }
+a { color: var(--accent); text-decoration: none; }
+.bg-black { background:#0b0b0b !important; }
+.card { background: var(--panel); border: none; color: inherit; }
+.btn-primary { background: var(--accent); border: none; }
+input.form-control, textarea.form-control, select.form-select { background:#131416; color:#e6eef8; border:1px solid #2a2c30; }
+.form-control:focus { box-shadow:0 0 0 0.1rem rgba(59,130,246,0.15); border-color:var(--accent); }
+.header-logo { width:36px; height:36px; object-fit:cover; }
+
+/* Small screens */
+@media (max-width: 576px) {
+  .display-4 { font-size: 2rem; }
+  .card-body { padding: 1rem; }
+}

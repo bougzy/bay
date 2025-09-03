@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Montracorp - Smart Investments</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Dark theme */
+    body {
+      background-color: #121212;
+      color: #eaeaea;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+    .navbar {
+      background: #1f1f1f;
+    }
+    .navbar-brand {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #0d6efd !important;
+    }
+    .nav-link { color: #bbb !important; }
+    .nav-link.active, .nav-link:hover { color: #0d6efd !important; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #1f1f1f, #0d6efd22);
+      padding: 80px 20px;
+    }
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #bbb;
+    }
+
+    /* Cards */
+    .card {
+      background: #1e1e1e;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      color: #ddd;
+      transition: transform 0.3s ease;
+    }
+    .card:hover { transform: translateY(-10px); }
+
+    /* Buttons */
+    .btn-primary {
+      background: #0d6efd;
+      border: none;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: #0b5ed7;
+      transform: scale(1.05);
+    }
+
+    /* Features */
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #0d6efd;
+    }
+
+    /* Stats */
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+
+    /* Testimonials */
+    .testimonial {
+      font-style: italic;
+      color: #ccc;
+    }
+    .testimonial-author {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+
+    /* Footer */
+    footer {
+      background: #1f1f1f;
+      color: #777;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    /* Spinner overlay */
+    #spinner {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: #121212;
+      top: 0; left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    #spinner.hidden { display: none; }
+    /* Crypto Ticker */
+.crypto-ticker {
+  background: #0d1117;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px solid #222;
+}
+.ticker-container {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+.ticker {
+  display: inline-block;
+  padding-left: 100%;
+  animation: ticker 25s linear infinite;
+}
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+.ticker span {
+  margin-right: 40px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.ticker .up { color: #28a745; }   /* green for positive */
+.ticker .down { color: #dc3545; } /* red for negative */
+
+  </style>
+</head>
+<body>
+  <!-- Spinner -->
+  <div id="spinner">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg sticky-top py-3">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold fs-3 text-primary" href="#">Montracorp</a>
+
+    <!-- Toggler -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Links -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav me-3">
+        <li class="nav-item"><a class="nav-link active fs-5" href="#">Home</a></li>
+        <li class="nav-item"><a class="nav-link fs-5" href="#plans">Plans</a></li>
+        <li class="nav-item"><a class="nav-link fs-5" href="#calculator">Calculator</a></li>
+        <li class="nav-item"><a class="nav-link fs-5" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link fs-5" href="#contact">Contact</a></li>
+      </ul>
+
+      <!-- Auth Buttons -->
+      <div class="d-flex gap-2">
+        <a href="login.html" class="btn btn-outline-primary px-4">Login</a>
+        <a href="register.html" class="btn btn-primary px-4">Register</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- CSS (Optional Enhancements) -->
+<style>
+  .navbar {
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+  }
+  .navbar-brand {
+    text-transform: uppercase;
+  }
+  .nav-link {
+    transition: color 0.3s ease;
+  }
+  .nav-link:hover {
+    color: #00ffcc !important;
+  }
+</style>
+
+
+    <!-- Crypto Ticker -->
+  <!-- <section class="crypto-ticker py-2">
+    <div class="ticker-container">
+      <div id="ticker" class="ticker"></div>
+    </div>
+  </section> -->
+
+  <!-- Fixed Crypto Ticker -->
+<section class="crypto-ticker py-2">
+  <div class="ticker-container">
+    <div id="ticker" class="ticker">
+      <!-- Example items -->
+      <span>BTC/USD: $25,430</span>
+      <span>ETH/USD: $1,640</span>
+      <span>XRP/USD: $0.52</span>
+      <span>LTC/USD: $93.25</span>
+      <span>DOGE/USD: $0.075</span>
+    </div>
+  </div>
+</section>
+
+<!-- CSS -->
+<style>
+.crypto-ticker {
+  position: fixed;
+  top: 0; /* use bottom:0; if you want it at the bottom */
+  left: 0;
+  width: 100%;
+  background: #0a0f1f;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 1050;
+  overflow: hidden;
+  /* border-bottom: 2px solid #007bff; */
+}
+
+.ticker-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker {
+  display: inline-block;
+  padding-left: 100%;
+  animation: tickerMove 20s linear infinite;
+}
+
+.ticker span {
+  display: inline-block;
+  margin: 0 2rem;
+  color: #00ffcc;
+}
+
+@keyframes tickerMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* Push body content down so it doesn't overlap with fixed ticker */
+body {
+  padding-top: 40px; /* Adjust based on ticker height */
+}
+</style>
+
+
+  <!-- Hero -->
+  <!-- Hero Section -->
+<section class="hero d-flex align-items-center text-white">
+  <div class="container">
+    <div class="row align-items-center">
+      
+      <!-- Left Column -->
+      <div class="col-lg-6 col-md-12 text-center text-lg-start">
+        <h1 class="display-4 fw-bold mb-3">
+          The right place for <span class="text-primary">online trading</span> on the financial markets
+        </h1>
+        <p class="lead mb-4">
+          The most convenient trading interface. Instant access to more than 
+          <strong>100+ assets</strong> of the world's leading companies.
+        </p>
+        <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+          <a href="#get-started" class="btn btn-primary btn-lg px-4">Get Started</a>
+          <a href="#signin" class="btn btn-outline-light btn-lg px-4">Sign In</a>
+        </div>
+      </div>
+      
+      <!-- Right Column -->
+      <div class="col-lg-6 col-md-12 mt-5 mt-lg-0 text-center position-relative">
+        <div class="chart-container">
+          <img src="assets/chy.png" alt="Trading Chart" class="img-fluid floating-chart">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Hero Section CSS -->
+<style>
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0f1f, #1a2238);
+  overflow: hidden;
+  padding: 60px 0;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  line-height: 1.3;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: #dcdcdc;
+}
+
+.hero .btn-primary {
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  transition: all 0.3s ease;
+}
+.hero .btn-primary:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+.hero .btn-outline-light {
+  border-radius: 8px;
+  border: 2px solid #fff;
+  transition: all 0.3s ease;
+}
+.hero .btn-outline-light:hover {
+  background: #fff;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+.chart-container {
+  position: relative;
+  display: inline-block;
+}
+
+.floating-chart {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  animation: floatChart 6s ease-in-out infinite;
+}
+
+@keyframes floatChart {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+  .hero p {
+    font-size: 1rem;
+  }
+}
+</style>
+
+
+  <!-- Features -->
+  <section class="container py-5">
+    <h2 class="text-center mb-5">Why Choose Montracorp?</h2>
+    <div class="row g-4 text-center">
+      <div class="col-md-4">
+        <i class="fas fa-lock feature-icon"></i>
+        <h5 class="mt-3">Secure & Trusted</h5>
+        <p>Your funds are protected with top-tier security protocols.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="fas fa-chart-line feature-icon"></i>
+        <h5 class="mt-3">High Returns</h5>
+        <p>Earn competitive returns tailored to your investment plan.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="fas fa-headset feature-icon"></i>
+        <h5 class="mt-3">24/7 Support</h5>
+        <p>Our team is always available to assist you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans -->
+  <section id="plans" class="container py-5">
+    <h2 class="text-center mb-5">Our Investment Plans</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card p-4 text-center">
+          <h4>Starter Plan</h4>
+          <p class="stat-number">5% ROI</p>
+          <p>Min: $100 - Max: $999</p>
+          <button class="btn btn-primary">Invest Now</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-4 text-center">
+          <h4>Growth Plan</h4>
+          <p class="stat-number">10% ROI</p>
+          <p>Min: $1,000 - Max: $9,999</p>
+          <button class="btn btn-primary">Invest Now</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-4 text-center">
+          <h4>Premium Plan</h4>
+          <p class="stat-number">15% ROI</p>
+          <p>Min: $10,000 - Max: Unlimited</p>
+          <button class="btn btn-primary">Invest Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="container py-5 text-center box-shadow shadow-lg">
+    <div class="row g-4">
+      <div class="col-md-3">
+        <p class="stat-number" id="users">0</p>
+        <p>Active Users</p>
+      </div>
+      <div class="col-md-3">
+        <p class="stat-number" id="transactions">0</p>
+        <p>Transactions</p>
+      </div>
+      <div class="col-md-3">
+        <p class="stat-number" id="payouts">0</p>
+        <p>Total Payouts</p>
+      </div>
+      <div class="col-md-3">
+        <p class="stat-number" id="countries">0</p>
+        <p>Countries Served</p>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- Investment Calculator -->
+<section id="calculator" class="py-5 bg-dark text-light">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="card p-4 shadow-lg border-0 bg-gradient animate__animated animate__fadeInUp">
+          
+          <!-- Heading -->
+          <h3 class="mb-4 text-center text-primary fw-bold">
+            <i class="bi bi-calculator"></i> Investment Calculator
+          </h3>
+          
+          <!-- Form -->
+          <form id="calcForm" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label for="amount" class="form-label fw-semibold">Investment Amount ($)</label>
+              <input type="number" id="amount" class="form-control form-control-lg" placeholder="Enter amount" required>
+            </div>
+            <div class="mb-3">
+              <label for="rate" class="form-label fw-semibold">Annual Interest Rate (%)</label>
+              <input type="number" id="rate" class="form-control form-control-lg" placeholder="e.g. 12" required>
+            </div>
+            <div class="mb-3">
+              <label for="years" class="form-label fw-semibold">Years</label>
+              <input type="number" id="years" class="form-control form-control-lg" placeholder="e.g. 5" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
+              Calculate <i class="bi bi-arrow-right-circle ms-2"></i>
+            </button>
+          </form>
+          
+          <!-- Result Box -->
+          <div id="result" class="mt-4 text-center p-3 bg-dark border border-primary rounded d-none">
+            <h5 class="text-success">Your Future Investment Value:</h5>
+            <p class="fs-4 fw-bold text-white" id="calcOutput"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CSS Enhancements -->
+<style>
+  #calculator {
+    background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+  }
+  #calculator .card {
+    border-radius: 15px;
+    background: #111;
+    color: #fff;
+  }
+  #calculator .form-control {
+    background: #222;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 10px;
+  }
+  #calculator .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 10px rgba(13,110,253,0.5);
+  }
+  #calculator .btn {
+    border-radius: 30px;
+    transition: all 0.3s ease-in-out;
+  }
+  #calculator .btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(13,110,253,0.6);
+  }
+  #result {
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<!-- JS Logic -->
+<script>
+  document.getElementById("calcForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let amount = parseFloat(document.getElementById("amount").value);
+    let rate = parseFloat(document.getElementById("rate").value) / 100;
+    let years = parseFloat(document.getElementById("years").value);
+
+    if (isNaN(amount) || isNaN(rate) || isNaN(years)) return;
+
+    // Compound interest formula
+    let futureValue = amount * Math.pow((1 + rate), years);
+
+    document.getElementById("calcOutput").textContent = `$${futureValue.toFixed(2)}`;
+    document.getElementById("result").classList.remove("d-none");
+  });
+</script>
+
+<!-- Icons & Animations -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+
+
+  <!-- Experience Section -->
+<!-- Experience Section -->
+<section id="experience" class="py-5 bg-dark text-light">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      
+      <!-- Left Column: Image -->
+      <div class="col-lg-6 wow fadeInLeft">
+        <div class="floating">
+          <img src="https://images.unsplash.com/photo-1631603090989-93f9ef6f9d80?w=500&auto=format&fit=crop&q=60" 
+               alt="Investment Experience" 
+               class="img-fluid rounded shadow-lg">
+        </div>
+      </div>
+
+      <!-- Right Column: Text -->
+      <div class="col-lg-6 wow fadeInRight">
+        <div class="d-flex gap-5 mb-4">
+          <div class="stat-box text-center p-3 rounded">
+            <h2 class="fw-bold text-primary counter" data-target="10">0</h2>
+            <p class="lead">Years Experience</p>
+          </div>
+          <div class="stat-box text-center p-3 rounded">
+            <h2 class="fw-bold text-primary counter" data-target="25000">0</h2>
+            <p class="lead">Satisfied Customers</p>
+          </div>
+        </div>
+        <p class="fs-5 animate__animated animate__fadeInUp animate__delay-1s">
+          We Have <span class="text-primary fw-bold">10+ Years</span> of experience in standard professional services.  
+          A platform that allows novice traders to copy/mirror professional traders' positions.  
+          We create all of the materials to assist you in growing and progressing to the next level.  
+          We're delighted you came across <span class="text-primary">Montracorp</span>.  
+        </p>
+        <p class="fs-6 text-muted animate__animated animate__fadeInUp animate__delay-2s">
+          Don't pass up this chance to hear about what we do and the incredible team that makes it all possible!
+        </p>
+        <a href="#about" class="btn btn-primary btn-lg mt-3 shadow-lg animate__animated animate__pulse animate__infinite">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script>
+  new WOW().init();
+
+  // Counter Animation
+  const counters = document.querySelectorAll('.counter');
+  const speed = 200; // lower = faster
+
+  const animateCounters = () => {
+    counters.forEach(counter => {
+      const updateCount = () => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText;
+
+        const increment = Math.ceil(target / speed);
+
+        if (count < target) {
+          counter.innerText = count + increment;
+          setTimeout(updateCount, 30);
+        } else {
+          counter.innerText = target.toLocaleString();
+        }
+      };
+      updateCount();
+    });
+  };
+
+  // Trigger when in viewport
+  let started = false;
+  window.addEventListener("scroll", () => {
+    const section = document.getElementById("experience");
+    const rect = section.getBoundingClientRect();
+    if (!started && rect.top < window.innerHeight && rect.bottom >= 0) {
+      animateCounters();
+      started = true;
+    }
+  });
+</script>
+
+<style>
+  #experience h2 {
+    font-size: 2.5rem;
+  }
+  #experience .btn {
+    border-radius: 30px;
+    transition: all 0.3s ease;
+  }
+  #experience .btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(13,110,253,0.6);
+  }
+  #experience img {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+  #experience img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px rgba(13,110,253,0.5);
+  }
+  /* Floating image effect */
+  .floating {
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+  /* Stats glowing effect */
+  .stat-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+  }
+  .stat-box:hover {
+    background: rgba(13,110,253,0.1);
+    box-shadow: 0 0 20px rgba(13,110,253,0.5);
+    transform: scale(1.05);
+  }
+</style>
+
+
+<!-- Partners Section -->
+<section id="partners" class="py-5 bg-dark text-white mt-3">
+  <div class="container text-center">
+    
+    <!-- Heading -->
+    <div class="mb-5 wow fadeInDown">
+      <h2 class="fw-bold text-primary">Our Trusted Partners</h2>
+      <p class="lead text-muted">
+        We are proud to collaborate with some of the most reputable brands in the industry.
+      </p>
+    </div>
+
+    <!-- Partner Logos -->
+    <div class="row g-4 justify-content-center align-items-center">
+      <div class="col-6 col-md-3 col-lg-2 wow zoomIn" data-wow-delay="0.1s">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" 
+             class="img-fluid partner-logo" alt="Partner 1">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2 wow zoomIn" data-wow-delay="0.2s">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
+             class="img-fluid partner-logo" alt="Partner 2">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2 wow zoomIn" data-wow-delay="0.3s">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" 
+             class="img-fluid partner-logo" alt="Partner 3">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2 wow zoomIn" data-wow-delay="0.4s">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" 
+       class="img-fluid partner-logo" alt="Partner 4 - Google">
+</div>
+
+      <div class="col-6 col-md-3 col-lg-2 wow zoomIn" data-wow-delay="0.5s">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" 
+             class="img-fluid partner-logo" alt="Partner 5">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CSS -->
+<style>
+  #partners {
+    background: #0a0a0a;
+    position: relative;
+  }
+
+  #partners h2 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+  }
+
+  #partners p {
+    color: #aaa;
+  }
+
+  .partner-logo {
+    max-height: 60px;
+    filter: grayscale(100%);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .partner-logo:hover {
+    filter: grayscale(0%);
+    transform: scale(1.1);
+  }
+</style>
+
+<!-- Animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script>
+  new WOW().init();
+</script>
+
+
+
+  <!-- Testimonials -->
+  <section class="container py-5">
+    <h2 class="text-center mb-5">What Our Investors Say</h2>
+    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner text-center">
+        <div class="carousel-item active">
+          <p class="testimonial">"Montracorp has changed my financial life. The returns are amazing and reliable."</p>
+          <p class="testimonial-author">- Sarah L.</p>
+        </div>
+        <div class="carousel-item">
+          <p class="testimonial">"Professional service and great support. Highly recommend to new investors!"</p>
+          <p class="testimonial-author">- James K.</p>
+        </div>
+        <div class="carousel-item">
+          <p class="testimonial">"The calculator helped me plan long term. Montracorp is a game-changer."</p>
+          <p class="testimonial-author">- Maria R.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="container py-5 border border-primary">
+    <h2 class="text-center mb-4">About Montracorp</h2>
+    <p class="text-center text-white">
+      Montracorp is a modern investment company dedicated to helping clients achieve financial freedom. 
+      With our advanced tools, secure systems, and trusted advisors, you can make informed decisions and grow your wealth safely.
+    </p>
+  </section>
+
+  <!-- FAQ Section -->
+<section id="faq" class="container py-5">
+  <h2 class="text-center mb-4 text-primary">Frequently Asked Questions</h2>
+  <div class="row g-4">
+    
+    <div class="col-md-6">
+      <div class="accordion accordion-flush" id="faqAccordion1">
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q1">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a1">
+              I can't sign in to my account?
+            </button>
+          </h2>
+          <div id="a1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion1">
+            <div class="accordion-body text-white">
+              Ensure you are entering the correct email and password. If you forgot your password, use the "Forgot Password" option to reset it. If problems persist, contact support.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q2">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a2">
+              What is Copy Stop Loss?
+            </button>
+          </h2>
+          <div id="a2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion1">
+            <div class="accordion-body text-white">
+              Copy Stop Loss is a risk management feature that automatically stops copying a trader once losses reach a predefined level, protecting your funds.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q3">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a3">
+              What are the disadvantages of online trading?
+            </button>
+          </h2>
+          <div id="a3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion1">
+            <div class="accordion-body text-white">
+              Risks include market volatility, technical issues, possible scams, and emotional decision-making. Always trade responsibly and use risk management strategies.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q4">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a4">
+              How do I make a deposit?
+            </button>
+          </h2>
+          <div id="a4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion1">
+            <div class="accordion-body text-white">
+              Log into your account, go to the Deposit section, select your preferred payment method, enter the amount, and follow the instructions to complete the deposit.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-md-6">
+      <div class="accordion accordion-flush" id="faqAccordion2">
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q5">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a5">
+              What is Copy Trading?
+            </button>
+          </h2>
+          <div id="a5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion2">
+            <div class="accordion-body text-white">
+              Copy Trading allows you to automatically replicate the trades of experienced traders, making investing easier even if you are new to trading.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q6">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a6">
+              What level of support do you offer?
+            </button>
+          </h2>
+          <div id="a6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion2">
+            <div class="accordion-body text-white">
+              We provide 24/7 customer support through live chat, email, and phone, ensuring your questions are answered promptly.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q7">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a7">
+              How do I withdraw my profits?
+            </button>
+          </h2>
+          <div id="a7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion2">
+            <div class="accordion-body text-white">
+              Go to the Withdrawal section in your account, select your withdrawal method, enter the amount, and confirm. Processing times depend on the method used.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q8">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a8">
+              Is it safe to share my info here?
+            </button>
+          </h2>
+          <div id="a8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion2">
+            <div class="accordion-body text-white">
+              Yes, all personal information is protected with industry-standard encryption and security measures. We never share your details without consent.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q9">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a9">
+              How long are withdrawals processed?
+            </button>
+          </h2>
+          <div id="a9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion2">
+            <div class="accordion-body text-white">
+              Withdrawals are typically processed within 24–72 hours, depending on the payment method and verification requirements.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item bg-dark text-light border-secondary wow fadeInUp">
+          <h2 class="accordion-header" id="q10">
+            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#a10">
+              Do you offer referrals?
+            </button>
+          </h2>
+          <div id="a10" class="accordion-collapse collapse" data-bs-parent="#faqAccordion2">
+            <div class="accordion-body text-white">
+              Yes, we have a referral program that rewards you for inviting others to join. Details are available in your account dashboard.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script>
+  new WOW().init();
+</script>
+
+<style>
+  #faq h2 { color: #0d6efd; font-weight: bold; }
+  .accordion-button { border: none; }
+  .accordion-button:not(.collapsed) {
+    background-color: #0d6efd22;
+    color: #0d6efd;
+    box-shadow: none;
+  }
+  .accordion-item {
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .accordion-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
+  }
+</style>
+
+
+
+  <!-- Contact -->
+  <section id="contact" class="container py-5">
+    <h2 class="text-center mb-4">Contact Us</h2>
+    <form class="row g-3 justify-content-center">
+      <div class="col-md-5">
+        <input type="text" class="form-control" placeholder="Your Name" required>
+      </div>
+      <div class="col-md-5">
+        <input type="email" class="form-control" placeholder="Your Email" required>
+      </div>
+      <div class="col-md-10">
+        <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
+      </div>
+      <div class="col-md-10">
+        <button class="btn btn-primary w-100">Send Message</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Montracorp. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Spinner hide after page load
+    window.addEventListener("load", () => {
+      document.getElementById("spinner").classList.add("hidden");
+    });
+
+    // Investment calculator logic
+    document.getElementById("calcForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById("amount").value);
+      const rate = parseFloat(document.getElementById("rate").value) / 100;
+      const years = parseInt(document.getElementById("years").value);
+
+      const futureValue = amount * Math.pow((1 + rate), years);
+      document.getElementById("result").innerText =
+        `Future Value: $${futureValue.toFixed(2)}`;
+    });
+
+    // Counter animation
+    function animateValue(id, start, end, duration) {
+      const obj = document.getElementById(id);
+      let startTime = null;
+
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        obj.innerText = Math.floor(progress * (end - start) + start);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    window.addEventListener("load", () => {
+      animateValue("users", 0, 5000, 2000);
+      animateValue("transactions", 0, 15000, 2500);
+      animateValue("payouts", 0, 120000, 3000);
+      animateValue("countries", 0, 45, 2000);
+    });
+
+    // Fetch crypto prices from CoinGecko
+async function loadCryptoPrices() {
+  try {
+    const res = await fetch(
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano,ripple,solana,polkadot"
+    );
+    const data = await res.json();
+
+    const ticker = document.getElementById("ticker");
+    ticker.innerHTML = "";
+
+    data.forEach(coin => {
+      const changeClass = coin.price_change_percentage_24h >= 0 ? "up" : "down";
+      const span = document.createElement("span");
+      span.innerHTML = `
+        <img src="${coin.image}" alt="${coin.name}" style="width:18px;vertical-align:middle;margin-right:6px;">
+        ${coin.name} (${coin.symbol.toUpperCase()}): 
+        $${coin.current_price.toLocaleString()} 
+        <span class="${changeClass}">${coin.price_change_percentage_24h.toFixed(2)}%</span>
+      `;
+      ticker.appendChild(span);
+    });
+  } catch (err) {
+    console.error("Error loading crypto prices:", err);
+  }
+}
+
+// Refresh every 60s
+loadCryptoPrices();
+setInterval(loadCryptoPrices, 60000);
+
+  </script>
+
+  
+</body>
+</html>
