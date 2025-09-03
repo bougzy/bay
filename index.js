@@ -348,80 +348,80 @@ const resetPassword = async (req, res) => {
 
 
 // ================= Investment Plan Model =================
-const investmentPlanSchema = new mongoose.Schema({
-  name: { type: String, required: true },           // Plan name
-  description: String,                              // Plan description
-  wallets: [{ type: String, required: true }],      // Array of wallet addresses
-  minAmount: { type: Number, required: true },      // Minimum deposit amount
-  maxAmount: { type: Number, required: true },      // Maximum deposit amount
-}, { timestamps: true });
+// const investmentPlanSchema = new mongoose.Schema({
+//   name: { type: String, required: true },           // Plan name
+//   description: String,                              // Plan description
+//   wallets: [{ type: String, required: true }],      // Array of wallet addresses
+//   minAmount: { type: Number, required: true },      // Minimum deposit amount
+//   maxAmount: { type: Number, required: true },      // Maximum deposit amount
+// }, { timestamps: true });
 
-const InvestmentPlan = mongoose.model("InvestmentPlan", investmentPlanSchema);
+// const InvestmentPlan = mongoose.model("InvestmentPlan", investmentPlanSchema);
 
 // ================= Controllers =================
 
 // Create default investment plans if none exist
-const createDefaultPlans = async () => {
-  const count = await InvestmentPlan.countDocuments();
-  if (count === 0) {
-    const plans = [
-      {
-        name: "Starter Plan",
-        description: "Low risk, entry-level plan for beginners.",
-        wallets: [
-          "0xStarterWallet1ABC123",
-          "0xStarterWallet2DEF456",
-          "0xStarterWallet3GHI789"
-        ],
-        minAmount: 50,
-        maxAmount: 500
-      },
-      {
-        name: "Pro Plan",
-        description: "Medium risk, higher returns for experienced investors.",
-        wallets: [
-          "0xProWallet1JKL123",
-          "0xProWallet2MNO456",
-          "0xProWallet3PQR789"
-        ],
-        minAmount: 501,
-        maxAmount: 2000
-      },
-      {
-        name: "Elite Plan",
-        description: "High risk, maximum potential returns for advanced investors.",
-        wallets: [
-          "0xEliteWallet1STU123",
-          "0xEliteWallet2VWX456",
-          "0xEliteWallet3YZA789"
-        ],
-        minAmount: 2001,
-        maxAmount: 10000
-      }
-    ];
+// const createDefaultPlans = async () => {
+//   const count = await InvestmentPlan.countDocuments();
+//   if (count === 0) {
+//     const plans = [
+//       {
+//         name: "Starter Plan",
+//         description: "Low risk, entry-level plan for beginners.",
+//         wallets: [
+//           "0xStarterWallet1ABC123",
+//           "0xStarterWallet2DEF456",
+//           "0xStarterWallet3GHI789"
+//         ],
+//         minAmount: 50,
+//         maxAmount: 500
+//       },
+//       {
+//         name: "Pro Plan",
+//         description: "Medium risk, higher returns for experienced investors.",
+//         wallets: [
+//           "0xProWallet1JKL123",
+//           "0xProWallet2MNO456",
+//           "0xProWallet3PQR789"
+//         ],
+//         minAmount: 501,
+//         maxAmount: 2000
+//       },
+//       {
+//         name: "Elite Plan",
+//         description: "High risk, maximum potential returns for advanced investors.",
+//         wallets: [
+//           "0xEliteWallet1STU123",
+//           "0xEliteWallet2VWX456",
+//           "0xEliteWallet3YZA789"
+//         ],
+//         minAmount: 2001,
+//         maxAmount: 10000
+//       }
+//     ];
 
-    await InvestmentPlan.insertMany(plans);
-    console.log("Default investment plans created");
-  }
-};
+//     await InvestmentPlan.insertMany(plans);
+//     console.log("Default investment plans created");
+//   }
+// };
 
 // Get all investment plans
-const getInvestmentPlans = async (req, res) => {
-  try {
-    const plans = await InvestmentPlan.find();
-    res.json(plans);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
-};
+// const getInvestmentPlans = async (req, res) => {
+//   try {
+//     const plans = await InvestmentPlan.find();
+//     res.json(plans);
+//   } catch (e) {
+//     res.status(500).json({ message: e.message });
+//   }
+// };
 
 // ================= Express Routes =================
 
 // Route to get all plans
-app.get("/api/investment-plans", getInvestmentPlans);
+// app.get("/api/investment-plans", getInvestmentPlans);
 
-// Initialize default plans
-createDefaultPlans();
+// // Initialize default plans
+// createDefaultPlans();
 
 
 
