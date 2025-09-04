@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Plans</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --accent: #bb86fc;
+            --accent-secondary: #03dac6;
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: rgba(30, 30, 30, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+        }
+        
+        .investment-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+        
+        .investment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .card-header {
+            background: linear-gradient(45deg, #2c2c2c, #1e1e1e);
+            border-bottom: 1px solid #333;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .period {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            color: var(--text-secondary);
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li i {
+            color: var(--accent-secondary);
+            margin-right: 0.5rem;
+        }
+        
+        .btn-invest {
+            background: linear-gradient(45deg, var(--accent), #6200ee);
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-invest:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(187, 134, 252, 0.4);
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #333;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #333;
+        }
+        
+        .wallet-address {
+            background-color: #2a2a2a;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            letter-spacing: 1px;
+            border: 1px dashed #444;
+            position: relative;
+            user-select: all;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--accent-secondary);
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .instructions {
+            background-color: #2a2a2a;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="%23232323" x="0" y="0" width="100" height="100"/><path fill="%23171717" d="M0 0L100 100M100 0L0 100" stroke-width="0.5"/></svg>');
+            padding: 4rem 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent);
+        }
+        
+        /* Toast notification for copy feedback */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            border: 1px solid #333;
+            color: var(--text-primary);
+            z-index: 1050;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-currency-bitcoin me-2" style="color: var(--accent);"></i>
+                CryptoInvest
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">Premium <span style="color: var(--accent);">Investment</span> Plans</h1>
+            <p class="lead text-light mb-4">Choose from our carefully crafted investment plans to grow your crypto portfolio</p>
+        </div>
+    </section>
+
+    <!-- Investment Plans -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title">Our Investment Plans</h2>
+            
+            <div class="row g-4">
+                <!-- Plan 1: Basic -->
+                <div class="col-md-4">
+                    <div class="investment-card h-100">
+                        <div class="card-header text-center py-4">
+                            <h3 class="fw-bold">Basic</h3>
+                            <div class="price">$500</div>
+                            <div class="period">One-time investment</div>
+                        </div>
+                        <div class="card-body">
+                            <ul class="feature-list">
+                                <li><i class="bi bi-check-circle-fill"></i> 15% Monthly Returns</li>
+                                <li><i class="bi bi-check-circle-fill"></i> 6 Month Duration</li>
+                                <li><i class="bi bi-check-circle-fill"></i> 24/7 Support</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Basic Analytics</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer text-center py-4">
+                            <button class="btn btn-invest w-75" data-bs-toggle="modal" data-bs-target="#basicPlanModal">
+                                Invest Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Plan 2: Pro -->
+                <div class="col-md-4">
+                    <div class="investment-card h-100">
+                        <div class="card-header text-center py-4">
+                            <h3 class="fw-bold">Pro</h3>
+                            <div class="price">$2000</div>
+                            <div class="period">One-time investment</div>
+                        </div>
+                        <div class="card-body">
+                            <ul class="feature-list">
+                                <li><i class="bi bi-check-circle-fill"></i> 25% Monthly Returns</li>
+                                <li><i class="bi bi-check-circle-fill"></i> 12 Month Duration</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Priority Support</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Advanced Analytics</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Personal Manager</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer text-center py-4">
+                            <button class="btn btn-invest w-75" data-bs-toggle="modal" data-bs-target="#proPlanModal">
+                                Invest Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Plan 3: Enterprise -->
+                <div class="col-md-4">
+                    <div class="investment-card h-100">
+                        <div class="card-header text-center py-4">
+                            <h3 class="fw-bold">Enterprise</h3>
+                            <div class="price">$5000</div>
+                            <div class="period">One-time investment</div>
+                        </div>
+                        <div class="card-body">
+                            <ul class="feature-list">
+                                <li><i class="bi bi-check-circle-fill"></i> 35% Monthly Returns</li>
+                                <li><i class="bi bi-check-circle-fill"></i> 24 Month Duration</li>
+                                <li><i class="bi bi-check-circle-fill"></i> 24/7 Dedicated Support</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Premium Analytics</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Two Personal Managers</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Custom Strategies</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer text-center py-4">
+                            <button class="btn btn-invest w-75" data-bs-toggle="modal" data-bs-target="#enterprisePlanModal">
+                                Invest Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Basic Plan Modal -->
+    <div class="modal fade" id="basicPlanModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Basic Plan Investment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Please send exactly <strong>$500</strong> to the wallet address below.</p>
+                    
+                    <div class="wallet-address mb-4">
+                        1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+                        <button class="copy-btn" onclick="copyAddress('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa')">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h6><i class="bi bi-info-circle"></i> Important Instructions:</h6>
+                        <ul class="mb-0">
+                            <li>Send only BTC to this address</li>
+                            <li>Ensure the amount is exactly $500</li>
+                            <li>Transaction may take up to 15 minutes to confirm</li>
+                            <li>Contact support if you encounter any issues</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pro Plan Modal -->
+    <div class="modal fade" id="proPlanModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pro Plan Investment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Please send exactly <strong>$2000</strong> to the wallet address below.</p>
+                    
+                    <div class="wallet-address mb-4">
+                        0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+                        <button class="copy-btn" onclick="copyAddress('0x742d35Cc6634C0532925a3b844Bc454e4438f44e')">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h6><i class="bi bi-info-circle"></i> Important Instructions:</h6>
+                        <ul class="mb-0">
+                            <li>Send only ETH to this address</li>
+                            <li>Ensure the amount is exactly $2000</li>
+                            <li>Transaction may take up to 15 minutes to confirm</li>
+                            <li>Contact support if you encounter any issues</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enterprise Plan Modal -->
+    <div class="modal fade" id="enterprisePlanModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enterprise Plan Investment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Please send exactly <strong>$5000</strong> to the wallet address below.</p>
+                    
+                    <div class="wallet-address mb-4">
+                        LX4y5sHrTDECxnTjf6c5ZaTrxywdkUZ2RZ
+                        <button class="copy-btn" onclick="copyAddress('LX4y5sHrTDECxnTjf6c5ZaTrxywdkUZ2RZ')">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h6><i class="bi bi-info-circle"></i> Important Instructions:</h6>
+                        <ul class="mb-0">
+                            <li>Send only LTC to this address</li>
+                            <li>Ensure the amount is exactly $5000</li>
+                            <li>Transaction may take up to 15 minutes to confirm</li>
+                            <li>Contact support if you encounter any issues</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="copyToast">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill text-success me-2"></i> Wallet address copied to clipboard!
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to copy wallet address to clipboard
+        function copyAddress(address) {
+            // Create a temporary textarea element to hold the address
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = address;
+            document.body.appendChild(tempTextArea);
+            
+            // Select and copy the text
+            tempTextArea.select();
+            document.execCommand('copy');
+            
+            // Remove the temporary element
+            document.body.removeChild(tempTextArea);
+            
+            // Show toast notification
+            const toast = new bootstrap.Toast(document.getElementById('copyToast'));
+            toast.show();
+        }
+        
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+</body>
+</html>

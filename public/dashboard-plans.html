@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investment Plans</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body class="bg-dark text-light">
+  <nav class="navbar navbar-dark bg-black px-3">
+    <a href="dashboard-deposits.html" class="nav-link">Deposits</a>
+    <a href="dashboard-plans.html" class="navbar-brand">Plans</a>
+    <a href="dashboard-referrals.html" class="nav-link">Referrals</a>
+    <a href="dashboard-trading.html" class="nav-link">Copy-Trading</a>
+    <a href="dashboard-messages.html" class="nav-link">Messages</a>
+  </nav>
+
+  <div class="container py-4">
+    <h2>Investment Plans</h2>
+    <div class="row" id="plans"></div>
+  </div>
+
+  <script src="./js/api.js"></script>
+  <script src="./js/dashboard-plans.js"></script>
+  <script>
+    // Save current dashboard page as last visited
+localStorage.setItem("lastPage", window.location.pathname.split("/").pop());
+
+    document.addEventListener("DOMContentLoaded", async () => {
+  const res = await API.plans();
+  const plans = await res.json();
+
+  const container = document.getElementById("plans");
+  plans.forEach(plan => {
+    container.innerHTML += `
+      <div class="col-md-4 mb-3">
+        <div class="card bg-secondary text-light">
+          <div class="card-body">
+            <h5>${plan.name}</h5>
+            <p>Min: $${plan.minDeposit}</p>
+            <p>Max: $${plan.maxDeposit}</p>
+            <p>ROI: ${plan.roi}%</p>
+          </div>
+        </div>
+      </div>`;
+  });
+});
+
+  </script>
+</body>
+</html>

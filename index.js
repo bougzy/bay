@@ -42,14 +42,16 @@ adminSchema.pre("save", async function(next) {
 const Admin = mongoose.model("Admin", adminSchema);
 
 // Transaction Model
+// Transaction Model
 const transactionSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   type: { type: String, enum: ["deposit", "withdrawal"], required: true },
   amount: { type: Number, required: true },
   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
   adminNote: String,
+  proof: String, // Store file path or URL if needed
   createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
 
@@ -787,6 +789,318 @@ app.get("/api/user/referrals", protect, getMyReferrals);
 
 
 // ================= Express App =================
+
+
+// ================= USER DASHBOARD ENDPOINTS =================
+
+// Get user transactions
+app.get("/api/user/transactions", protect, async (req, res) => {
+  try {
+    const transactions = await Transaction.find({ user: req.user._id })
+      .sort({ createdAt: -1 });
+    res.json(transactions);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Get all investment plans
+app.get("/api/investment-plans", async (req, res) => {
+  try {
+    const plans = [
+      {
+        _id: "1",
+        name: "Basic Plan",
+        profitRate: 5,
+        minDeposit: 50,
+        maxDeposit: 1000,
+        walletAddress: "0xBasicWallet123"
+      },
+      {
+        _id: "2", 
+        name: "Premium Plan",
+        profitRate: 8,
+        minDeposit: 1001,
+        maxDeposit: 5000,
+        walletAddress: "0xPremiumWallet456"
+      },
+      {
+        _id: "3",
+        name: "VIP Plan", 
+        profitRate: 12,
+        minDeposit: 5001,
+        maxDeposit: 20000,
+        walletAddress: "0xVIPWallet789"
+      }
+    ];
+    res.json(plans);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Get traders
+app.get("/api/traders", protect, async (req, res) => {
+  try {
+    const traders = [
+      {
+        _id: "1",
+        name: "John Trader",
+        strategy: "Swing Trading",
+        followers: 150
+      },
+      {
+        _id: "2",
+        name: "Sarah Investor", 
+        strategy: "Day Trading",
+        followers: 230
+      },
+      {
+        _id: "3",
+        name: "Mike Analyst",
+        strategy: "Technical Analysis",
+        followers: 189
+      }
+    ];
+    res.json(traders);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Get user copy trades
+app.get("/api/user/copy-trades", protect, async (req, res) => {
+  try {
+    // For now return empty array as we don't have full copy trading implemented
+    res.json([]);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Follow trader endpoint
+app.post("/api/user/follow-trader", protect, async (req, res) => {
+  try {
+    const { traderId } = req.body;
+    
+    // Check if already following
+    const existingFollow = await UserFollow.findOne({ 
+      user: req.user._id, 
+      trader: traderId 
+    });
+    
+    if (existingFollow) {
+      return res.status(400).json({ message: "Already following this trader" });
+    }
+    
+    // Create follow relationship
+    await UserFollow.create({ 
+      user: req.user._id, 
+      trader: traderId 
+    });
+    
+    res.json({ message: "Trader followed successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Unfollow trader endpoint  
+app.post("/api/user/unfollow-trader", protect, async (req, res) => {
+  try {
+    const { traderId } = req.body;
+    
+    // Remove follow relationship
+    const result = await UserFollow.findOneAndDelete({ 
+      user: req.user._id, 
+      trader: traderId 
+    });
+    
+    if (!result) {
+      return res.status(404).json({ message: "Not following this trader" });
+    }
+    
+    res.json({ message: "Trader unfollowed successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Deposit endpoint
+app.post("/api/deposits", protect, async (req, res) => {
+  try {
+    const { amount } = req.body;
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: "Invalid deposit amount" });
+    }
+    
+    // Create transaction record
+    const transaction = await Transaction.create({
+      user: req.user._id,
+      type: "deposit",
+      amount: parseFloat(amount),
+      status: "pending"
+    });
+    
+    // Send notification
+    await sendNotification(
+      req.user._id,
+      "Deposit Submitted",
+      `Your deposit of $${amount} has been submitted for approval.`,
+      "deposit"
+    );
+    
+    res.json({ 
+      message: "Deposit submitted for approval", 
+      transaction 
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Withdrawal endpoint
+app.post("/api/withdrawals", protect, async (req, res) => {
+  try {
+    const { amount } = req.body;
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: "Invalid withdrawal amount" });
+    }
+    
+    // Check if user has sufficient balance
+    const user = await User.findById(req.user._id);
+    if (user.walletBalance < parseFloat(amount)) {
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
+    
+    // Create transaction record
+    const transaction = await Transaction.create({
+      user: req.user._id,
+      type: "withdrawal", 
+      amount: parseFloat(amount),
+      status: "pending"
+    });
+    
+    // Send notification
+    await sendNotification(
+      req.user._id,
+      "Withdrawal Requested",
+      `Your withdrawal request of $${amount} has been submitted.`,
+      "withdrawal"
+    );
+    
+    res.json({ 
+      message: "Withdrawal request submitted", 
+      transaction 
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Get user referrals with details
+app.get("/api/user/referrals", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate({
+      path: "referrals",
+      select: "name email walletBalance createdAt",
+      options: { sort: { createdAt: -1 } }
+    });
+    
+    res.json({
+      referralCode: user.referralCode,
+      totalReferrals: user.referrals.length,
+      referrals: user.referrals || []
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Get user messages
+app.get("/api/user/messages", protect, async (req, res) => {
+  try {
+    const messages = await Message.find({ recipients: req.user._id })
+      .sort({ createdAt: -1 })
+      .populate("sender", "email role");
+    res.json(messages);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// ================= ADMIN ENDPOINTS =================
+
+// Get all users for admin
+app.get("/api/admin/users", adminAuth, async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json(users);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Block/unblock user
+app.put("/api/admin/user/:userId/block", adminAuth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isBlocked } = req.body;
+    
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isBlocked },
+      { new: true }
+    ).select("-password");
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    res.json({ 
+      message: `User ${isBlocked ? 'blocked' : 'unblocked'} successfully`, 
+      user 
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Get dashboard statistics for admin
+app.get("/api/admin/dashboard-stats", adminAuth, async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalDeposits = await Transaction.aggregate([
+      { $match: { type: "deposit", status: "approved" } },
+      { $group: { _id: null, total: { $sum: "$amount" } } }
+    ]);
+    const totalWithdrawals = await Transaction.aggregate([
+      { $match: { type: "withdrawal", status: "approved" } },
+      { $group: { _id: null, total: { $sum: "$amount" } } }
+    ]);
+    const pendingTransactions = await Transaction.countDocuments({ 
+      status: "pending" 
+    });
+    
+    res.json({
+      totalUsers,
+      totalDeposits: totalDeposits[0]?.total || 0,
+      totalWithdrawals: totalWithdrawals[0]?.total || 0,
+      pendingTransactions
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// ================= Serve frontend last, only for non-API routes =================
+app.use(express.static(path.join(__dirname, "public")));
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 
 
 // User Routes

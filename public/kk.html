@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <style>
+    body { background-color: #121212; color: #fff; }
+    .navbar { background-color: #1a1a1a; }
+    .card { background-color: #1e1e1e; }
+    .form-control { background-color: #2a2a2a; color: #fff; border: 1px solid #444; }
+    .form-control:focus { background-color: #333; box-shadow: 0 0 5px #00d4ff; }
+    .btn-primary { background-color: #00d4ff; border: none; }
+    .btn-primary:hover { background-color: #00aacc; }
+    .btn-outline-primary { color: #00d4ff; border-color: #00d4ff; }
+    .btn-outline-primary:hover { background-color: #00d4ff; color: #000; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark px-3">
+  <a href="#" class="navbar-brand" data-section="deposits">Deposits</a>
+  <a href="#" class="nav-link" data-section="plans">Plans</a>
+  <a href="#" class="nav-link" data-section="referrals">Referrals</a>
+  <a href="#" class="nav-link" data-section="trading">Copy-Trading</a>
+  <a href="#" class="nav-link" data-section="messages">Messages</a>
+</nav>
+
+<div class="container py-4" id="dashboardContent">
+  <!-- Dynamic Section Content -->
+</div>
+
+<script>
+  // --- Helper: Auth Fetch ---
+  async function authFetch(url, options = {}) {
+    const token = localStorage.getItem('token');
+    options.headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': options.body instanceof FormData ? undefined : 'application/json'
+    };
+    const res = await fetch(url, options);
+    return res.json();
+  }
+
+  // --- Load Section ---
+  async function loadSection(section) {
+    const container = document.getElementById('dashboardContent');
+    container.innerHTML = `<p>Loading ${section}...</p>`;
+
+    // ---------------- DEPOSITS ----------------
+    if (section === 'deposits') {
+      container.innerHTML = `
+        <h2 class="mb-3">Wallet Balance: $<span id="walletBalance">0.00</span></h2>
+        <h4 class="mb-4">Profit Balance: $<span id="profitBalance">0.00</span></h4>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+          <div class="col-md-4"><div class="card text-center"><div class="card-body"><h5>Total Deposits</h5><h3 id="totalDeposits">$0.00</h3></div></div></div>
+          <div class="col-md-4"><div class="card text-center"><div class="card-body"><h5>Total Withdrawals</h5><h3 id="totalWithdrawals">$0.00</h3></div></div></div>
+          <div class="col-md-4"><div class="card text-center"><div class="card-body"><h5>Pending Requests</h5><h3 id="pendingRequests">0</h3></div></div></div>
+        </div>
+
+        <!-- Forms -->
+        <div class="card mb-4">
+          <div class="card-header">New Deposit</div>
+          <div class="card-body">
+            <form id="depositForm">
+              <input type="number" id="depositAmount" class="form-control mb-2" placeholder="Amount" required>
+              <input type="file" id="depositProof" class="form-control mb-2" required>
+              <button class="btn btn-primary w-100" type="submit">Submit Deposit</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header">Request Withdrawal</div>
+          <div class="card-body">
+            <form id="withdrawForm">
+              <input type="number" id="withdrawAmount" class="form-control mb-2" placeholder="Amount" required>
+              <button class="btn btn-outline-primary w-100" type="submit">Request Withdrawal</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Transactions Table + Chart -->
+        <div class="card mb-4">
+          <div class="card-header">Transactions Overview</div>
+          <div class="card-body">
+            <canvas id="transactionsChart" height="100"></canvas>
+            <table class="table table-dark table-striped mt-3">
+              <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="transactions"></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      setupDepositForm();
+      setupWithdrawForm();
+      loadUser();
+      loadTransactions();
+      renderTransactionChart();
+    }
+
+    // ---------------- REFERRALS ----------------
+    if (section === 'referrals') {
+      container.innerHTML = `
+        <h2>Referral Activity</h2>
+        <canvas id="referralChart" height="100"></canvas>
+        <ul class="list-group mt-4" id="referrals"></ul>
+        <h2 class="mt-4">Notifications</h2>
+        <ul class="list-group" id="notifications"></ul>
+      `;
+      loadReferrals();
+      loadNotifications();
+      renderReferralChart();
+    }
+
+    // ---------------- TRADING ----------------
+    if (section === 'trading') {
+      container.innerHTML = `
+        <h2>Available Traders</h2>
+        <div class="row" id="traders"></div>
+      `;
+      loadTraders();
+    }
+
+    // ---------------- PLANS ----------------
+    if (section === 'plans') {
+      container.innerHTML = `
+        <h2>Investment Plans</h2>
+        <div class="row" id="plansContainer"></div>
+      `;
+      loadPlans();
+    }
+
+    // ---------------- MESSAGES ----------------
+    if (section === 'messages') {
+      container.innerHTML = `
+        <h2>Your Messages</h2>
+        <ul class="list-group" id="messages"></ul>
+      `;
+      loadMessages();
+    }
+  }
+
+  // ---------------- NAVIGATION ----------------
+  document.querySelectorAll('a[data-section]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const section = a.getAttribute('data-section');
+      localStorage.setItem('lastSection', section);
+      loadSection(section);
+    });
+  });
+
+  const lastSection = localStorage.getItem('lastSection') || 'deposits';
+  loadSection(lastSection);
+
+  // ---------------- FUNCTIONS FOR DEPOSITS ----------------
+  async function loadUser() {
+    try {
+      const user = await authFetch('/api/me');
+      document.getElementById('walletBalance').innerText = parseFloat(user.walletBalance || 0).toFixed(2);
+      document.getElementById('profitBalance').innerText = parseFloat(user.profitBalance || 0).toFixed(2);
+      document.getElementById('totalDeposits').innerText = `$${parseFloat(user.totalDeposits || 0).toFixed(2)}`;
+      document.getElementById('totalWithdrawals').innerText = `$${parseFloat(user.totalWithdrawals || 0).toFixed(2)}`;
+      document.getElementById('pendingRequests').innerText = user.pendingRequests || 0;
+    } catch(e){console.error(e);}
+  }
+
+  async function loadTransactions() {
+    try {
+      const txs = await authFetch('/api/user/transactions');
+      const tbody = document.getElementById('transactions');
+      if(!tbody) return;
+      tbody.innerHTML = '';
+      txs.forEach(tx=>{
+        tbody.innerHTML += `<tr>
+          <td>${new Date(tx.createdAt).toLocaleString()}</td>
+          <td>${tx.type}</td>
+          <td>$${tx.amount}</td>
+          <td>${tx.status || 'Pending'}</td>
+        </tr>`;
+      });
+    } catch(e){console.error(e);}
+  }
+
+  function setupDepositForm() {
+    const form = document.getElementById('depositForm');
+    if(!form) return;
+    form.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('depositAmount').value);
+      const proof = document.getElementById('depositProof').files[0];
+      if(!amount || !proof) return alert('Enter valid amount & upload proof');
+      const formData = new FormData();
+      formData.append('amount', amount);
+      formData.append('proof', proof);
+      const res = await fetch('/api/deposits',{method:'POST',headers:{'Authorization':`Bearer ${localStorage.getItem('token')}`},body:formData});
+      const data = await res.json();
+      if(!res.ok) return alert(data.message);
+      alert('Deposit submitted!');
+      loadUser(); loadTransactions(); form.reset(); renderTransactionChart();
+    });
+  }
+
+  function setupWithdrawForm() {
+    const form = document.getElementById('withdrawForm');
+    if(!form) return;
+    form.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('withdrawAmount').value);
+      if(!amount) return alert('Enter valid amount');
+      const data = await authFetch('/api/withdrawals',{method:'POST',body:JSON.stringify({amount})});
+      if(data.message) alert(data.message);
+      loadUser(); loadTransactions(); form.reset(); renderTransactionChart();
+    });
+  }
+
+  // ---------------- CHART FUNCTIONS ----------------
+  async function renderTransactionChart() {
+    const txs = await authFetch('/api/user/transactions');
+    if(!txs.length) return;
+    const ctx = document.getElementById('transactionsChart').getContext('2d');
+    const labels = txs.map(tx=>new Date(tx.createdAt).toLocaleDateString());
+    const deposits = txs.map(tx=>tx.type==='deposit'?tx.amount:0);
+    const withdrawals = txs.map(tx=>tx.type==='withdrawal'?tx.amount:0);
+    new Chart(ctx,{type:'line',data:{labels,datasets:[
+      {label:'Deposits',data:deposits,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.2)',tension:0.3},
+      {label:'Withdrawals',data:withdrawals,borderColor:'#ff5050',backgroundColor:'rgba(255,80,80,0.2)',tension:0.3}
+    ]},options:{responsive:true,plugins:{legend:{labels:{color:'#fff'}}},scales:{x:{ticks:{color:'#fff'}},y:{ticks:{color:'#fff'}}}}});
+  }
+
+  async function renderReferralChart() {
+    const referrals = await authFetch('/api/user/referrals');
+    const counts = {}; referrals.forEach(r=>{
+      const month = new Date(r.createdAt).toLocaleString('default',{month:'short'});
+      counts[month]=(counts[month]||0)+1;
+    });
+    const ctx = document.getElementById('referralChart').getContext('2d');
+    new Chart(ctx,{type:'bar',data:{labels:Object.keys(counts),datasets:[{label:'Referrals per Month',data:Object.values(counts),backgroundColor:'#00d4ff'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#fff'}},y:{ticks:{color:'#fff'}}}}});
+  }
+
+  // ---------------- REFERRALS & NOTIFICATIONS ----------------
+  async function loadReferrals() {
+    const referrals = await authFetch('/api/user/referrals');
+    const list = document.getElementById('referrals'); if(!list) return; list.innerHTML='';
+    referrals.forEach(r=>{list.innerHTML+=`<li class="list-group-item bg-dark text-light">${r.email}</li>`;});
+  }
+
+  async function loadNotifications() {
+    const notifs = await authFetch('/api/user/notifications');
+    const list = document.getElementById('notifications'); if(!list) return; list.innerHTML='';
+    notifs.forEach(n=>{list.innerHTML+=`<li class="list-group-item bg-secondary text-light">${n.message}</li>`;});
+  }
+
+  // ---------------- TRADERS ----------------
+  async function loadTraders() {
+    const traders = await authFetch('/api/traders');
+    const container = document.getElementById('traders'); if(!container) return; container.innerHTML='';
+    traders.forEach(t=>{
+      container.innerHTML+=`
+        <div class="col-md-4 mb-3">
+          <div class="card bg-secondary text-light">
+            <div class="card-body">
+              <h5>${t.name}</h5>
+              <p>Performance: ${t.performance||0}%</p>
+              <button class="btn btn-success" onclick="followTrader('${t._id}')">Follow</button>
+              <button class="btn btn-danger" onclick="unfollowTrader('${t._id}')">Unfollow</button>
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+  async function followTrader(id){await authFetch('/api/user/follow-trader',{method:'POST',body:JSON.stringify({id})}); alert('Following trader');}
+  async function unfollowTrader(id){await authFetch('/api/user/unfollow-trader',{method:'POST',body:JSON.stringify({id})}); alert('Unfollowed trader');}
+
+  // ---------------- PLANS ----------------
+  async function loadPlans() {
+    const plans = await authFetch('/api/plans');
+    const container = document.getElementById('plansContainer'); if(!container) return; container.innerHTML='';
+    plans.forEach(p=>{
+      container.innerHTML+=`
+        <div class="col-md-4 mb-3">
+          <div class="card bg-secondary text-light p-3">
+            <h5>${p.name}</h5>
+            <p>ROI: ${p.roi}%</p>
+            <p>Duration: ${p.duration} days</p>
+            <canvas id="planChart-${p._id}" height="100"></canvas>
+          </div>
+        </div>`;
+      const ctx = document.getElementById(`planChart-${p._id}`).getContext('2d');
+      new Chart(ctx,{type:'doughnut',data:{labels:['ROI','Remaining'],datasets:[{data:[p.roi,100-p.roi],backgroundColor:['#00d4ff','#444']}]},options:{plugins:{legend:{labels:{color:'#fff'}}}}});
+    });
+  }
+
+  // ---------------- MESSAGES ----------------
+  async function loadMessages() {
+    const messages = await authFetch('/api/user/messages');
+    const list = document.getElementById('messages'); if(!list) return; list.innerHTML='';
+    messages.forEach(m=>{list.innerHTML+=`<li class="list-group-item bg-dark text-light">${m.sender}: ${m.content}</li>`;});
+  }
+
+  // ---------------- REFRESH INTERVALS ----------------
+  setInterval(loadUser,5000);
+  setInterval(loadTransactions,10000);
+  setInterval(loadReferrals,30000);
+  setInterval(loadNotifications,10000);
+</script>
+
+</body>
+</html>
