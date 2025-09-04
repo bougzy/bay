@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Montracorp - Smart Investments, Secure Future</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --primary-dark: #0a58ca;
+      --secondary: #00ffcc;
+      --dark-bg: #0a0a0a;
+      --dark-card: #121212;
+      --dark-border: #222;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+    }
+    
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-primary);
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--dark-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+    
+    /* Navbar */
+    .navbar {
+      background: rgba(15, 15, 15, 0.95) !important;
+      backdrop-filter: blur(10px);
+      padding: 15px 0;
+      transition: all 0.3s ease;
+    }
+    .navbar.scrolled {
+      padding: 8px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-link {
+      color: var(--text-primary) !important;
+      font-weight: 500;
+      position: relative;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    .nav-link:hover::before,
+    .nav-link.active::before {
+      width: 100%;
+    }
+    
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0a0f1f 0%, #1a2238 50%, #0d1117 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(13, 110, 253, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 255, 204, 0.1) 0%, transparent 50%);
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    .hero-btns .btn {
+      border-radius: 50px;
+      padding: 12px 30px;
+      font-weight: 600;
+      margin-right: 15px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    .hero-img {
+      position: relative;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(13, 110, 253, 0.15);
+      border-color: rgba(13, 110, 253, 0.3);
+    }
+    
+    /* Buttons */
+    .btn {
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(45deg, var(--primary), #4dabf7);
+      border: none;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3);
+    }
+    .btn-outline-primary {
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+    .btn-outline-primary:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    /* Section Headings */
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+      text-align: center;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+    
+    /* Features */
+    .feature-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+    }
+    .feature-box:hover {
+      background: rgba(13, 110, 253, 0.05);
+      transform: translateY(-5px);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    
+    /* Stats */
+    .stat-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.3s ease;
+    }
+    .stat-box:hover {
+      background: rgba(13, 110, 253, 0.1);
+      transform: translateY(-5px);
+    }
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* Testimonials */
+    .testimonial-card {
+      padding: 30px;
+      border-radius: 15px;
+      background: var(--dark-card);
+      position: relative;
+      margin-top: 40px;
+    }
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 30px;
+      font-size: 5rem;
+      color: var(--primary);
+      opacity: 0.2;
+      font-family: Georgia, serif;
+    }
+    .testimonial-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 15px;
+    }
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .testimonial-role {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Crypto Ticker */
+    .crypto-ticker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(10, 15, 31, 0.95);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      z-index: 1050;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .ticker-container {
+      display: flex;
+      align-items: center;
+      height: 40px;
+    }
+    .ticker {
+      display: inline-block;
+      padding-left: 100%;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    .ticker span {
+      margin-right: 40px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .ticker .up { color: #28a745; }
+    .ticker .down { color: #dc3545; }
+    
+    /* Footer */
+    footer {
+      background: #0a0a0a;
+      padding: 60px 0 30px;
+      position: relative;
+    }
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+    .footer-links h5 {
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+    }
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .footer-links a:hover {
+      color: var(--primary);
+      padding-left: 5px;
+    }
+    .social-icons a {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      margin-right: 10px;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+    .social-icons a:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      .section-title {
+        font-size: 2rem;
+      }
+    }
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1.1rem;
+      }
+      .stat-number {
+        font-size: 2.5rem;
+      }
+    }
+    @media (max-width: 576px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .hero-btns .btn {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Spinner -->
+  <!-- <div id="spinner" class="d-flex justify-content-center align-items-center" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#121212;z-index:9999;">
+    <div class="spinner-border text-primary" style="width:3rem;height:3rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div> -->
+
+  <!-- Crypto Ticker -->
+  <div class="crypto-ticker">
+    <div class="container-fluid">
+      <div class="ticker-container">
+        <div id="ticker" class="ticker">
+          <!-- Ticker content will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Montracorp</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto me-3">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#plans">Plans</a></li>
+          <li class="nav-item"><a class="nav-link" href="#calculator">Calculator</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+        <div class="d-flex gap-2">
+          <a href="login.html" class="btn btn-outline-primary">Login</a>
+          <a href="register.html" class="btn btn-primary">Register</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 hero-content" data-aos="fade-right" data-aos-duration="1000">
+          <h1>Smart Investments for <span class="text-primary">Secure Future</span></h1>
+          <p>Join thousands of investors who trust Montracorp for secure, high-return investments with cutting-edge technology and expert guidance.</p>
+          <div class="hero-btns">
+            <a href="#plans" class="btn btn-primary btn-lg">Start Investing</a>
+            <a href="#calculator" class="btn btn-outline-light btn-lg">Calculate Returns</a>
+          </div>
+        </div>
+        <div class="col-lg-6" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+          <div class="hero-img text-center">
+            <img src="https://images.unsplash.com/photo-1640856858516-c6ef58d42d3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Investment Chart" class="img-fluid rounded shadow-lg">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Why Choose Montracorp?</h2>
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-box">
+            <i class="fas fa-shield-alt feature-icon"></i>
+            <h4>Secure & Trusted</h4>
+            <p>Bank-level security with multi-layer encryption and regulatory compliance.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-box">
+            <i class="fas fa-chart-line feature-icon"></i>
+            <h4>High Returns</h4>
+            <p>Industry-leading returns with diversified investment strategies.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-box">
+            <i class="fas fa-headset feature-icon"></i>
+            <h4>24/7 Support</h4>
+            <p>Dedicated support team available round the clock for all your queries.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-box">
+            <i class="fas fa-bolt feature-icon"></i>
+            <h4>Instant Withdrawals</h4>
+            <p>Quick and hassle-free withdrawal process with no hidden fees.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-box">
+            <i class="fas fa-globe feature-icon"></i>
+            <h4>Global Access</h4>
+            <p>Access your investments from anywhere in the world with our platform.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-box">
+            <i class="fas fa-lock feature-icon"></i>
+            <h4>Insurance Protection</h4>
+            <p>All investments are insured against potential market volatilities.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-5 bg-dark">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="25000">0</div>
+            <p>Active Investors</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="150">0</div>
+            <p>Countries Served</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="98">0</div>
+            <p>Success Rate</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="120">0</div>
+            <p>Million USD Volume</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans Section -->
+  <section id="plans" class="py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Investment Plans</h2>
+      <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">Choose from our range of investment plans tailored to meet your financial goals</p>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="card p-4 text-center h-100">
+            <div class="card-header bg-transparent border-0">
+              <h4 class="text-primary">Starter Plan</h4>
+              <div class="price-tag">
+                <span class="stat-number">5%</span>
+                <span class="text-secondary">ROI</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled mb-4">
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Min: $100 - Max: $999</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Daily Payouts</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> 24/7 Support</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Basic Analytics</li>
+              </ul>
+              <button class="btn btn-primary w-100 mt-3">Get Started</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="card p-4 text-center h-100 popular">
+            <div class="position-absolute top-0 end-0 m-3">
+              <span class="badge bg-primary">Popular</span>
+            </div>
+            <div class="card-header bg-transparent border-0">
+              <h4 class="text-primary">Growth Plan</h4>
+              <div class="price-tag">
+                <span class="stat-number">10%</span>
+                <span class="text-secondary">ROI</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled mb-4">
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Min: $1,000 - Max: $9,999</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Hourly Payouts</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Priority Support</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Advanced Analytics</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Risk Management</li>
+              </ul>
+              <button class="btn btn-primary w-100 mt-3">Get Started</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="card p-4 text-center h-100">
+            <div class="card-header bg-transparent border-0">
+              <h4 class="text-primary">Premium Plan</h4>
+              <div class="price-tag">
+                <span class="stat-number">15%</span>
+                <span class="text-secondary">ROI</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled mb-4">
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Min: $10,000 - Unlimited</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Real-time Payouts</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Dedicated Account Manager</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Premium Analytics</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Exclusive Investment Opportunities</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Insurance Protection</li>
+              </ul>
+              <button class="btn btn-primary w-100 mt-3">Get Started</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Section -->
+  <section id="calculator" class="py-5 bg-dark">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Investment Calculator</h2>
+      <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">Calculate your potential returns with our investment calculator</p>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card p-4" data-aos="fade-up" data-aos-delay="200">
+            <form id="calcForm">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <label for="amount" class="form-label">Investment Amount ($)</label>
+                  <input type="range" class="form-range" id="amountRange" min="100" max="100000" step="100" value="1000">
+                  <input type="number" class="form-control mt-2" id="amount" value="1000" min="100" max="1000000">
+                </div>
+                <div class="col-md-6">
+                  <label for="plan" class="form-label">Investment Plan</label>
+                  <select class="form-select" id="plan">
+                    <option value="5">Starter Plan (5%)</option>
+                    <option value="10" selected>Growth Plan (10%)</option>
+                    <option value="15">Premium Plan (15%)</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="years" class="form-label">Investment Period (Years)</label>
+                  <input type="range" class="form-range" id="yearsRange" min="1" max="10" value="5">
+                  <input type="number" class="form-control mt-2" id="years" value="5" min="1" max="10">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Estimated Returns</label>
+                  <div class="p-3 bg-dark rounded">
+                    <h4 class="text-primary mb-0" id="calcOutput">$1,610.51</h4>
+                    <small class="text-secondary">Total: $2,610.51</small>
+                  </div>
+                </div>
+                <div class="col-12 text-center mt-4">
+                  <button type="button" class="btn btn-primary btn-lg" id="calculateBtn">Calculate</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">What Our Investors Say</h2>
+      <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">Hear from our satisfied investors worldwide</p>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="testimonial-card">
+            <p class="testimonial">"Montracorp has completely transformed my approach to investing. The returns are consistent and the platform is incredibly user-friendly."</p>
+            <div class="d-flex align-items-center mt-4">
+              <div class="testimonial-avatar">
+                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Sarah Johnson" class="img-fluid">
+              </div>
+              <div>
+                <div class="testimonial-author">Sarah Johnson</div>
+                <div class="testimonial-role">Investor since 2020</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="testimonial-card">
+            <p class="testimonial">"The support team is exceptional. They guided me through every step and helped me maximize my returns. I've never felt more confident about my investments."</p>
+            <div class="d-flex align-items-center mt-4">
+              <div class="testimonial-avatar">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael Chen" class="img-fluid">
+              </div>
+              <div>
+                <div class="testimonial-author">Michael Chen</div>
+                <div class="testimonial-role">Investor since 2019</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="testimonial-card">
+            <p class="testimonial">"I've tried several investment platforms, but Montracorp stands out with its transparency, security, and impressive returns. Highly recommended!"</p>
+            <div class="d-flex align-items-center mt-4">
+              <div class="testimonial-avatar">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Emma Rodriguez" class="img-fluid">
+              </div>
+              <div>
+                <div class="testimonial-author">Emma Rodriguez</div>
+                <div class="testimonial-role">Investor since 2021</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-5 bg-dark">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Frequently Asked Questions</h2>
+      <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">Find answers to common questions about our platform</p>
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="accordion accordion-flush" id="faqAccordion">
+            <div class="accordion-item bg-transparent text-white border-secondary mb-3" data-aos="fade-up" data-aos-delay="100">
+              <h2 class="accordion-header" id="faqHeading1">
+                <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
+                  How do I create an account?
+                </button>
+              </h2>
+              <div id="faqCollapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Click on the Register button at the top right corner, fill in your details, verify your email address, and you're ready to start investing.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item bg-transparent text-white border-secondary mb-3" data-aos="fade-up" data-aos-delay="200">
+              <h2 class="accordion-header" id="faqHeading2">
+                <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
+                  What payment methods do you accept?
+                </button>
+              </h2>
+              <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  We accept bank transfers, credit/debit cards, and various cryptocurrencies including Bitcoin, Ethereum, and USDT.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item bg-transparent text-white border-secondary mb-3" data-aos="fade-up" data-aos-delay="300">
+              <h2 class="accordion-header" id="faqHeading3">
+                <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3">
+                  How often are profits distributed?
+                </button>
+              </h2>
+              <div id="faqCollapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Profit distribution depends on your investment plan. Starter Plan pays daily, Growth Plan pays hourly, and Premium Plan pays in real-time.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item bg-transparent text-white border-secondary mb-3" data-aos="fade-up" data-aos-delay="400">
+              <h2 class="accordion-header" id="faqHeading4">
+                <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4">
+                  Is there a minimum investment amount?
+                </button>
+              </h2>
+              <div id="faqCollapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  The minimum investment amount is $100 for our Starter Plan. Other plans have higher minimums as detailed in the plans section.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item bg-transparent text-white border-secondary mb-3" data-aos="fade-up" data-aos-delay="500">
+              <h2 class="accordion-header" id="faqHeading5">
+                <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5">
+                  How secure is my investment?
+                </button>
+              </h2>
+              <div id="faqCollapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  We employ bank-level security measures including SSL encryption, two-factor authentication, and cold storage for cryptocurrencies. All investments are also insured against market risks.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Contact Us</h2>
+      <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">Have questions? Get in touch with our support team</p>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card p-4" data-aos="fade-up" data-aos-delay="200">
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label">Full Name</label>
+                  <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email Address</label>
+                  <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="col-12">
+                  <label for="subject" class="form-label">Subject</label>
+                  <input type="text" class="form-control" id="subject" required>
+                </div>
+                <div class="col-12">
+                  <label for="message" class="form-label">Message</label>
+                  <textarea class="form-control" id="message" rows="5" required></textarea>
+                </div>
+                <div class="col-12 text-center mt-4">
+                  <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <h4 class="text-white mb-4">Montracorp</h4>
+          <p class="text-secondary">Smart investments for a secure future. Join thousands of investors who trust us with their financial goals.</p>
+          <div class="social-icons mt-4">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4 footer-links">
+          <h5>Quick Links</h5>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#plans">Plans</a></li>
+            <li><a href="#calculator">Calculator</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-4 footer-links">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Disclaimer</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4 col-md-4">
+          <h5>Contact Info</h5>
+          <ul class="list-unstyled text-secondary">
+            <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Financial Street, New York, NY</li>
+            <li class="mb-2"><i class="fas fa-phone me-2"></i> +1 (234) 567-8900</li>
+            <li class="mb-2"><i class="fas fa-envelope me-2"></i> support@montracorp.com</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-5 bg-secondary">
+      <div class="text-center text-secondary">
+        <p>&copy; 2025 Montracorp. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 100
+    });
+
+    // Hide spinner after page load
+    window.addEventListener("load", () => {
+      document.getElementById("spinner").style.display = "none";
+    });
+
+    // Navbar scroll effect
+    window.addEventListener("scroll", function() {
+      const navbar = document.querySelector(".navbar");
+      if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    });
+
+    // Counter animation
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200;
+
+    const startCounter = () => {
+      counters.forEach(counter => {
+        const updateCount = () => {
+          const target = +counter.getAttribute('data-target');
+          const count = +counter.innerText;
+
+          const inc = Math.ceil(target / speed);
+
+          if (count < target) {
+            counter.innerText = count + inc;
+            setTimeout(updateCount, 20);
+          } else {
+            counter.innerText = target.toLocaleString();
+          }
+        };
+        updateCount();
+      });
+    };
+
+    // Start counter when in viewport
+    let counterStarted = false;
+    const statsSection = document.querySelector('.bg-dark');
+    window.addEventListener("scroll", () => {
+      const rect = statsSection.getBoundingClientRect();
+      if (!counterStarted && rect.top < window.innerHeight && rect.bottom >= 0) {
+        startCounter();
+        counterStarted = true;
+      }
+    });
+
+    // Investment calculator
+    const amountRange = document.getElementById('amountRange');
+    const amountInput = document.getElementById('amount');
+    const yearsRange = document.getElementById('yearsRange');
+    const yearsInput = document.getElementById('years');
+    const planSelect = document.getElementById('plan');
+    const calcOutput = document.getElementById('calcOutput');
+    const calculateBtn = document.getElementById('calculateBtn');
+
+    // Sync range and number inputs
+    amountRange.addEventListener('input', () => {
+      amountInput.value = amountRange.value;
+      calculateReturns();
+    });
+    amountInput.addEventListener('input', () => {
+      amountRange.value = amountInput.value;
+      calculateReturns();
+    });
+    yearsRange.addEventListener('input', () => {
+      yearsInput.value = yearsRange.value;
+      calculateReturns();
+    });
+    yearsInput.addEventListener('input', () => {
+      yearsRange.value = yearsInput.value;
+      calculateReturns();
+    });
+    planSelect.addEventListener('change', calculateReturns);
+
+    function calculateReturns() {
+      const amount = parseFloat(amountInput.value);
+      const rate = parseFloat(planSelect.value) / 100;
+      const years = parseFloat(yearsInput.value);
+      
+      if (isNaN(amount) || isNaN(rate) || isNaN(years)) return;
+      
+      const futureValue = amount * Math.pow((1 + rate), years);
+      const profit = futureValue - amount;
+      
+      calcOutput.innerHTML = `$${profit.toFixed(2)}`;
+      document.querySelector('#calcOutput + small').textContent = `Total: $${futureValue.toFixed(2)}`;
+    }
+
+    // Initialize calculator
+    calculateReturns();
+
+    // Fetch crypto prices from CoinGecko
+    async function loadCryptoPrices() {
+      try {
+        const res = await fetch(
+          "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano,ripple,solana,polkadot&order=market_cap_desc&per_page=10&page=1&sparkline=false"
+        );
+        const data = await res.json();
+
+        const ticker = document.getElementById("ticker");
+        ticker.innerHTML = "";
+
+        data.forEach(coin => {
+          const changeClass = coin.price_change_percentage_24h >= 0 ? "up" : "down";
+          const span = document.createElement("span");
+          span.innerHTML = `
+            ${coin.symbol.toUpperCase()}: 
+            $${coin.current_price.toLocaleString()} 
+            <span class="${changeClass}">${coin.price_change_percentage_24h.toFixed(2)}%</span>
+          `;
+          ticker.appendChild(span);
+        });
+      } catch (err) {
+        console.error("Error loading crypto prices:", err);
+        // Fallback data
+        const ticker = document.getElementById("ticker");
+        ticker.innerHTML = `
+          <span>BTC: $25,430 <span class="up">1.25%</span></span>
+          <span>ETH: $1,640 <span class="up">0.85%</span></span>
+          <span>XRP: $0.52 <span class="down">-0.35%</span></span>
+          <span>LTC: $93.25 <span class="up">2.10%</span></span>
+          <span>DOGE: $0.075 <span class="down">-1.45%</span></span>
+        `;
+      }
+    }
+
+    // Refresh every 60s
+    loadCryptoPrices();
+    setInterval(loadCryptoPrices, 60000);
+  </script>
+</body>
+</html>

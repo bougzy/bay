@@ -145,6 +145,401 @@
 .ticker .down { color: #dc3545; } /* red for negative */
 
   </style>
+
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --primary-dark: #0a58ca;
+      --secondary: #00ffcc;
+      --dark-bg: #0a0a0a;
+      --dark-card: #121212;
+      --dark-border: #222;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+    }
+    
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-primary);
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--dark-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+    
+    /* Navbar */
+    .navbar {
+      background: rgba(15, 15, 15, 0.95) !important;
+      backdrop-filter: blur(10px);
+      padding: 15px 0;
+      transition: all 0.3s ease;
+    }
+    .navbar.scrolled {
+      padding: 8px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-link {
+      color: var(--text-primary) !important;
+      font-weight: 500;
+      position: relative;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    .nav-link:hover::before,
+    .nav-link.active::before {
+      width: 100%;
+    }
+    
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0a0f1f 0%, #1a2238 50%, #0d1117 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(13, 110, 253, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 255, 204, 0.1) 0%, transparent 50%);
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    .hero-btns .btn {
+      border-radius: 50px;
+      padding: 12px 30px;
+      font-weight: 600;
+      margin-right: 15px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    .hero-img {
+      position: relative;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(13, 110, 253, 0.15);
+      border-color: rgba(13, 110, 253, 0.3);
+    }
+    
+    /* Buttons */
+    .btn {
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(45deg, var(--primary), #4dabf7);
+      border: none;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3);
+    }
+    .btn-outline-primary {
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+    .btn-outline-primary:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    /* Section Headings */
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+      text-align: center;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+    
+    /* Features */
+    .feature-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+    }
+    .feature-box:hover {
+      background: rgba(13, 110, 253, 0.05);
+      transform: translateY(-5px);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    
+    /* Stats */
+    .stat-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.3s ease;
+    }
+    .stat-box:hover {
+      background: rgba(13, 110, 253, 0.1);
+      transform: translateY(-5px);
+    }
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* Testimonials */
+    .testimonial-card {
+      padding: 30px;
+      border-radius: 15px;
+      background: var(--dark-card);
+      position: relative;
+      margin-top: 40px;
+    }
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 30px;
+      font-size: 5rem;
+      color: var(--primary);
+      opacity: 0.2;
+      font-family: Georgia, serif;
+    }
+    .testimonial-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 15px;
+    }
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .testimonial-role {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Crypto Ticker */
+    .crypto-ticker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(10, 15, 31, 0.95);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      z-index: 1050;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .ticker-container {
+      display: flex;
+      align-items: center;
+      height: 40px;
+    }
+    .ticker {
+      display: inline-block;
+      padding-left: 100%;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    .ticker span {
+      margin-right: 40px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .ticker .up { color: #28a745; }
+    .ticker .down { color: #dc3545; }
+    
+    /* Footer */
+    footer {
+      background: #0a0a0a;
+      padding: 60px 0 30px;
+      position: relative;
+    }
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+    .footer-links h5 {
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+    }
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .footer-links a:hover {
+      color: var(--primary);
+      padding-left: 5px;
+    }
+    .social-icons a {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      margin-right: 10px;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+    .social-icons a:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      .section-title {
+        font-size: 2rem;
+      }
+    }
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1.1rem;
+      }
+      .stat-number {
+        font-size: 2.5rem;
+      }
+    }
+    @media (max-width: 576px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .hero-btns .btn {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Spinner -->
@@ -203,12 +598,7 @@
 </style>
 
 
-    <!-- Crypto Ticker -->
-  <!-- <section class="crypto-ticker py-2">
-    <div class="ticker-container">
-      <div id="ticker" class="ticker"></div>
-    </div>
-  </section> -->
+   
 
   <!-- Fixed Crypto Ticker -->
 <section class="crypto-ticker py-2">
@@ -369,182 +759,505 @@ body {
     font-size: 1rem;
   }
 }
+
+/* Section Headings */
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+      text-align: center;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+    
+    /* Features */
+    .feature-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+    }
+    .feature-box:hover {
+      background: rgba(13, 110, 253, 0.05);
+      transform: translateY(-5px);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    
+    /* Stats */
+    .stat-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.3s ease;
+    }
+    .stat-box:hover {
+      background: rgba(13, 110, 253, 0.1);
+      transform: translateY(-5px);
+    }
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+
 </style>
 
 
   <!-- Features -->
-  <section class="container py-5">
-    <h2 class="text-center mb-5">Why Choose Montracorp?</h2>
-    <div class="row g-4 text-center">
-      <div class="col-md-4">
-        <i class="fas fa-lock feature-icon"></i>
-        <h5 class="mt-3">Secure & Trusted</h5>
-        <p>Your funds are protected with top-tier security protocols.</p>
-      </div>
-      <div class="col-md-4">
-        <i class="fas fa-chart-line feature-icon"></i>
-        <h5 class="mt-3">High Returns</h5>
-        <p>Earn competitive returns tailored to your investment plan.</p>
-      </div>
-      <div class="col-md-4">
-        <i class="fas fa-headset feature-icon"></i>
-        <h5 class="mt-3">24/7 Support</h5>
-        <p>Our team is always available to assist you.</p>
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Why Choose Montracorp?</h2>
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-box">
+            <i class="fas fa-shield-alt feature-icon"></i>
+            <h4>Secure & Trusted</h4>
+            <p>Bank-level security with multi-layer encryption and regulatory compliance.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-box">
+            <i class="fas fa-chart-line feature-icon"></i>
+            <h4>High Returns</h4>
+            <p>Industry-leading returns with diversified investment strategies.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-box">
+            <i class="fas fa-headset feature-icon"></i>
+            <h4>24/7 Support</h4>
+            <p>Dedicated support team available round the clock for all your queries.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-box">
+            <i class="fas fa-bolt feature-icon"></i>
+            <h4>Instant Withdrawals</h4>
+            <p>Quick and hassle-free withdrawal process with no hidden fees.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-box">
+            <i class="fas fa-globe feature-icon"></i>
+            <h4>Global Access</h4>
+            <p>Access your investments from anywhere in the world with our platform.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-box">
+            <i class="fas fa-lock feature-icon"></i>
+            <h4>Insurance Protection</h4>
+            <p>All investments are insured against potential market volatilities.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Plans -->
-  <section id="plans" class="container py-5">
-    <h2 class="text-center mb-5">Our Investment Plans</h2>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card p-4 text-center">
-          <h4>Starter Plan</h4>
-          <p class="stat-number">5% ROI</p>
-          <p>Min: $100 - Max: $999</p>
-          <button class="btn btn-primary">Invest Now</button>
+
+   <style>
+    :root {
+      --primary: #0d6efd;
+      --primary-dark: #0a58ca;
+      --secondary: #00ffcc;
+      --dark-bg: #0a0a0a;
+      --dark-card: #121212;
+      --dark-border: #222;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+    }
+    
+    /* ... (other CSS styles remain the same) ... */
+    
+    /* Stats Section Styles */
+    .stats-section {
+      position: relative;
+    }
+    
+    .stat-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-box:hover {
+      background: rgba(13, 110, 253, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* Responsive adjustments for stats */
+    @media (max-width: 768px) {
+      .stat-number {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ... (other HTML content) ... -->
+
+  <!-- Stats Section -->
+  <section class="py-5 bg-dark stats-section">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="25000">0</div>
+            <p>Active Investors</p>
+          </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card p-4 text-center">
-          <h4>Growth Plan</h4>
-          <p class="stat-number">10% ROI</p>
-          <p>Min: $1,000 - Max: $9,999</p>
-          <button class="btn btn-primary">Invest Now</button>
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="150">0</div>
+            <p>Countries Served</p>
+          </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card p-4 text-center">
-          <h4>Premium Plan</h4>
-          <p class="stat-number">15% ROI</p>
-          <p>Min: $10,000 - Max: Unlimited</p>
-          <button class="btn btn-primary">Invest Now</button>
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="98">0</div>
+            <p>Success Rate</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="stat-box">
+            <div class="stat-number counter" data-target="120">0</div>
+            <p>Million USD Volume</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Stats -->
-  <section class="container py-5 text-center box-shadow shadow-lg">
-    <div class="row g-4">
-      <div class="col-md-3">
-        <p class="stat-number" id="users">0</p>
-        <p>Active Users</p>
-      </div>
-      <div class="col-md-3">
-        <p class="stat-number" id="transactions">0</p>
-        <p>Transactions</p>
-      </div>
-      <div class="col-md-3">
-        <p class="stat-number" id="payouts">0</p>
-        <p>Total Payouts</p>
-      </div>
-      <div class="col-md-3">
-        <p class="stat-number" id="countries">0</p>
-        <p>Countries Served</p>
+  <!-- ... (rest of HTML content) ... -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 100
+    });
+
+    // ... (other JavaScript code) ...
+    
+    // Counter animation functionality
+    function initCounter() {
+      const counters = document.querySelectorAll('.counter');
+      const speed = 200;
+      let counterStarted = false;
+
+      const startCounter = () => {
+        counters.forEach(counter => {
+          const updateCount = () => {
+            const target = +counter.getAttribute('data-target');
+            const count = +counter.innerText;
+
+            const inc = Math.ceil(target / speed);
+
+            if (count < target) {
+              counter.innerText = count + inc;
+              setTimeout(updateCount, 20);
+            } else {
+              counter.innerText = target.toLocaleString();
+            }
+          };
+          updateCount();
+        });
+      };
+
+      // Start counter when in viewport
+      const statsSection = document.querySelector('.stats-section');
+      
+      const checkIfInViewport = () => {
+        if (counterStarted) return;
+        
+        const rect = statsSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom >= 0) {
+          startCounter();
+          counterStarted = true;
+          // Remove the scroll listener once the counter has started
+          window.removeEventListener('scroll', checkIfInViewport);
+        }
+      };
+
+      // Check on load and scroll
+      window.addEventListener('load', checkIfInViewport);
+      window.addEventListener('scroll', checkIfInViewport);
+    }
+
+    // Initialize counter when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      // ... other initialization code ...
+      initCounter();
+    });
+  </script>
+
+
+  <section id="plans" class="py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Investment Plans</h2>
+      <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">Choose from our range of investment plans tailored to meet your financial goals</p>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="card p-4 text-center h-100">
+            <div class="card-header bg-transparent border-0">
+              <h4 class="text-primary">Starter Plan</h4>
+              <div class="price-tag">
+                <span class="stat-number">5%</span>
+                <span class="text-secondary">ROI</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled mb-4">
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Min: $100 - Max: $999</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Daily Payouts</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> 24/7 Support</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Basic Analytics</li>
+              </ul>
+              <button class="btn btn-primary w-100 mt-3">Get Started</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="card p-4 text-center h-100 popular">
+            <div class="position-absolute top-0 end-0 m-3">
+              <span class="badge bg-primary">Popular</span>
+            </div>
+            <div class="card-header bg-transparent border-0">
+              <h4 class="text-primary">Growth Plan</h4>
+              <div class="price-tag">
+                <span class="stat-number">10%</span>
+                <span class="text-secondary">ROI</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled mb-4">
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Min: $1,000 - Max: $9,999</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Hourly Payouts</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Priority Support</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Advanced Analytics</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Risk Management</li>
+              </ul>
+              <button class="btn btn-primary w-100 mt-3">Get Started</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="card p-4 text-center h-100">
+            <div class="card-header bg-transparent border-0">
+              <h4 class="text-primary">Premium Plan</h4>
+              <div class="price-tag">
+                <span class="stat-number">15%</span>
+                <span class="text-secondary">ROI</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled mb-4">
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Min: $10,000 - Unlimited</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Real-time Payouts</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Dedicated Account Manager</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Premium Analytics</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Exclusive Investment Opportunities</li>
+                <li class="py-2"><i class="fas fa-check-circle text-success me-2"></i> Insurance Protection</li>
+              </ul>
+              <button class="btn btn-primary w-100 mt-3">Get Started</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   
-  <!-- Investment Calculator -->
-<section id="calculator" class="py-5 bg-dark text-light">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-6 col-md-8">
-        <div class="card p-4 shadow-lg border-0 bg-gradient animate__animated animate__fadeInUp">
-          
-          <!-- Heading -->
-          <h3 class="mb-4 text-center text-primary fw-bold">
-            <i class="bi bi-calculator"></i> Investment Calculator
-          </h3>
-          
-          <!-- Form -->
-          <form id="calcForm" class="needs-validation" novalidate>
-            <div class="mb-3">
-              <label for="amount" class="form-label fw-semibold">Investment Amount ($)</label>
-              <input type="number" id="amount" class="form-control form-control-lg" placeholder="Enter amount" required>
-            </div>
-            <div class="mb-3">
-              <label for="rate" class="form-label fw-semibold">Annual Interest Rate (%)</label>
-              <input type="number" id="rate" class="form-control form-control-lg" placeholder="e.g. 12" required>
-            </div>
-            <div class="mb-3">
-              <label for="years" class="form-label fw-semibold">Years</label>
-              <input type="number" id="years" class="form-control form-control-lg" placeholder="e.g. 5" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
-              Calculate <i class="bi bi-arrow-right-circle ms-2"></i>
-            </button>
-          </form>
-          
-          <!-- Result Box -->
-          <div id="result" class="mt-4 text-center p-3 bg-dark border border-primary rounded d-none">
-            <h5 class="text-success">Your Future Investment Value:</h5>
-            <p class="fs-4 fw-bold text-white" id="calcOutput"></p>
+
+ <style>
+    /* All the existing CSS styles remain here */
+    /* ... (previous CSS code) ... */
+    
+    /* Calculator specific styles */
+    #calculator .card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    #calculator .form-range::-webkit-slider-thumb {
+      background: var(--primary);
+    }
+    
+    #calculator .form-range::-moz-range-thumb {
+      background: var(--primary);
+    }
+    
+    #calculator .form-control, #calculator .form-select {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--dark-border);
+      color: var(--text-primary);
+    }
+    
+    #calculator .form-control:focus, #calculator .form-select:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      color: var(--text-primary);
+    }
+    
+    #calculator .bg-dark {
+      background-color: rgba(255, 255, 255, 0.03) !important;
+    }
+  </style>
+
+  <!-- ... (previous HTML content) ... -->
+
+  <!-- Calculator Section -->
+  <section id="calculator" class="py-5 bg-dark">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Investment Calculator</h2>
+      <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">Calculate your potential returns with our investment calculator</p>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card p-4" data-aos="fade-up" data-aos-delay="200">
+            <form id="calcForm">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <label for="amount" class="form-label">Investment Amount ($)</label>
+                  <input type="range" class="form-range" id="amountRange" min="100" max="100000" step="100" value="1000">
+                  <input type="number" class="form-control mt-2" id="amount" value="1000" min="100" max="1000000">
+                </div>
+                <div class="col-md-6">
+                  <label for="plan" class="form-label">Investment Plan</label>
+                  <select class="form-select" id="plan">
+                    <option value="5">Starter Plan (5%)</option>
+                    <option value="10" selected>Growth Plan (10%)</option>
+                    <option value="15">Premium Plan (15%)</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="years" class="form-label">Investment Period (Years)</label>
+                  <input type="range" class="form-range" id="yearsRange" min="1" max="10" value="5">
+                  <input type="number" class="form-control mt-2" id="years" value="5" min="1" max="10">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Estimated Returns</label>
+                  <div class="p-3 bg-dark rounded">
+                    <h4 class="text-primary mb-0" id="calcOutput">$1,610.51</h4>
+                    <small class="text-secondary">Total: $2,610.51</small>
+                  </div>
+                </div>
+                <div class="col-12 text-center mt-4">
+                  <button type="button" class="btn btn-primary btn-lg" id="calculateBtn">Calculate</button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- CSS Enhancements -->
-<style>
-  #calculator {
-    background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-  }
-  #calculator .card {
-    border-radius: 15px;
-    background: #111;
-    color: #fff;
-  }
-  #calculator .form-control {
-    background: #222;
-    border: 1px solid #444;
-    color: #fff;
-    border-radius: 10px;
-  }
-  #calculator .form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 10px rgba(13,110,253,0.5);
-  }
-  #calculator .btn {
-    border-radius: 30px;
-    transition: all 0.3s ease-in-out;
-  }
-  #calculator .btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(13,110,253,0.6);
-  }
-  #result {
-    animation: fadeIn 0.8s ease-in-out;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>
+  <!-- ... (remaining HTML content) ... -->
 
-<!-- JS Logic -->
-<script>
-  document.getElementById("calcForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // ... (other JavaScript code) ...
+    
+    // Investment calculator - Separated functionality
+    function initCalculator() {
+      const amountRange = document.getElementById('amountRange');
+      const amountInput = document.getElementById('amount');
+      const yearsRange = document.getElementById('yearsRange');
+      const yearsInput = document.getElementById('years');
+      const planSelect = document.getElementById('plan');
+      const calcOutput = document.getElementById('calcOutput');
+      const calculateBtn = document.getElementById('calculateBtn');
 
-    let amount = parseFloat(document.getElementById("amount").value);
-    let rate = parseFloat(document.getElementById("rate").value) / 100;
-    let years = parseFloat(document.getElementById("years").value);
+      // Sync range and number inputs
+      amountRange.addEventListener('input', () => {
+        amountInput.value = amountRange.value;
+        calculateReturns();
+      });
+      
+      amountInput.addEventListener('input', () => {
+        amountRange.value = amountInput.value;
+        calculateReturns();
+      });
+      
+      yearsRange.addEventListener('input', () => {
+        yearsInput.value = yearsRange.value;
+        calculateReturns();
+      });
+      
+      yearsInput.addEventListener('input', () => {
+        yearsRange.value = yearsInput.value;
+        calculateReturns();
+      });
+      
+      planSelect.addEventListener('change', calculateReturns);
+      calculateBtn.addEventListener('click', calculateReturns);
 
-    if (isNaN(amount) || isNaN(rate) || isNaN(years)) return;
+      function calculateReturns() {
+        const amount = parseFloat(amountInput.value);
+        const rate = parseFloat(planSelect.value) / 100;
+        const years = parseFloat(yearsInput.value);
+        
+        if (isNaN(amount) || isNaN(rate) || isNaN(years)) return;
+        
+        const futureValue = amount * Math.pow((1 + rate), years);
+        const profit = futureValue - amount;
+        
+        calcOutput.innerHTML = `$${profit.toFixed(2)}`;
+        document.querySelector('#calcOutput + small').textContent = `Total: $${futureValue.toFixed(2)}`;
+      }
 
-    // Compound interest formula
-    let futureValue = amount * Math.pow((1 + rate), years);
+      // Initialize calculator
+      calculateReturns();
+    }
 
-    document.getElementById("calcOutput").textContent = `$${futureValue.toFixed(2)}`;
-    document.getElementById("result").classList.remove("d-none");
-  });
-</script>
+    // Initialize calculator when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      // ... other initialization code ...
+      initCalculator();
+    });
+  </script>
+
 
 <!-- Icons & Animations -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -557,64 +1270,115 @@ body {
 <section id="experience" class="py-5 bg-dark text-light">
   <div class="container">
     <div class="row align-items-center g-5">
-      
+
       <!-- Left Column: Image -->
-      <div class="col-lg-6 wow fadeInLeft">
-        <div class="floating">
-          <img src="https://images.unsplash.com/photo-1631603090989-93f9ef6f9d80?w=500&auto=format&fit=crop&q=60" 
+      <div class="col-lg-6 position-relative" data-aos="fade-right">
+        <div class="floating shadow-lg rounded overflow-hidden border border-primary">
+          <img src="https://images.unsplash.com/photo-1631603090989-93f9ef6f9d80?w=600&auto=format&fit=crop&q=60"
                alt="Investment Experience" 
-               class="img-fluid rounded shadow-lg">
+               class="img-fluid rounded">
+          <div class="experience-badge text-white text-center px-3 py-1 fw-bold">
+            Trusted & Secure
+          </div>
         </div>
       </div>
 
       <!-- Right Column: Text -->
-      <div class="col-lg-6 wow fadeInRight">
-        <div class="d-flex gap-5 mb-4">
-          <div class="stat-box text-center p-3 rounded">
+      <div class="col-lg-6" data-aos="fade-left">
+        <div class="d-flex gap-4 mb-4 flex-wrap">
+          <div class="stat-box text-center p-4 rounded shadow-sm flex-fill bg-gradient">
             <h2 class="fw-bold text-primary counter" data-target="10">0</h2>
-            <p class="lead">Years Experience</p>
+            <p class="lead mb-0">Years Experience</p>
           </div>
-          <div class="stat-box text-center p-3 rounded">
+          <div class="stat-box text-center p-4 rounded shadow-sm flex-fill bg-gradient">
             <h2 class="fw-bold text-primary counter" data-target="25000">0</h2>
-            <p class="lead">Satisfied Customers</p>
+            <p class="lead mb-0">Satisfied Customers</p>
           </div>
         </div>
-        <p class="fs-5 animate__animated animate__fadeInUp animate__delay-1s">
-          We Have <span class="text-primary fw-bold">10+ Years</span> of experience in standard professional services.  
-          A platform that allows novice traders to copy/mirror professional traders' positions.  
-          We create all of the materials to assist you in growing and progressing to the next level.  
-          We're delighted you came across <span class="text-primary">Montracorp</span>.  
+        <h3 class="fw-bold text-white mb-3 animate__animated animate__fadeInUp">Empowering Investors Globally</h3>
+        <p class="fs-5 text-white animate__animated animate__fadeInUp animate__delay-1s">
+          With <span class="text-primary fw-bold">10+ years</span> of experience, Montracorp delivers professional investment services.
+          Our platform enables both novice and expert investors to grow confidently, backed by trusted advisors and smart tools.
         </p>
         <p class="fs-6 text-muted animate__animated animate__fadeInUp animate__delay-2s">
-          Don't pass up this chance to hear about what we do and the incredible team that makes it all possible!
+          Join thousands of satisfied investors and experience a platform built for growth, security, and long-term success.
         </p>
-        <a href="#about" class="btn btn-primary btn-lg mt-3 shadow-lg animate__animated animate__pulse animate__infinite">Learn More</a>
+        <a href="#about" class="btn btn-primary btn-lg mt-3 shadow-lg animate__animated animate__pulse animate__infinite">
+          Learn More
+        </a>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- Animations -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
-<script>
-  new WOW().init();
+<style>
+/* Floating image */
+.floating {
+  position: relative;
+  animation: float 6s ease-in-out infinite;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.floating:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 0 35px rgba(13,110,253,0.4);
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
 
+/* Badge on image */
+.experience-badge {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13,110,253,0.85);
+  border-radius: 50px;
+  font-size: 0.9rem;
+}
+
+/* Stat boxes */
+.stat-box {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: all 0.3s ease;
+}
+.stat-box:hover {
+  background: rgba(13,110,253,0.1);
+  box-shadow: 0 0 25px rgba(13,110,253,0.5);
+  transform: translateY(-5px) scale(1.05);
+}
+.bg-gradient {
+  background: linear-gradient(135deg, rgba(13,110,253,0.1), rgba(0,255,204,0.05));
+}
+
+/* Buttons */
+#experience .btn {
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+#experience .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(13,110,253,0.6);
+}
+</style>
+
+<script>
   // Counter Animation
   const counters = document.querySelectorAll('.counter');
-  const speed = 200; // lower = faster
+  const speed = 200;
 
   const animateCounters = () => {
     counters.forEach(counter => {
       const updateCount = () => {
         const target = +counter.getAttribute('data-target');
         const count = +counter.innerText;
-
         const increment = Math.ceil(target / speed);
-
-        if (count < target) {
+        if(count < target) {
           counter.innerText = count + increment;
-          setTimeout(updateCount, 30);
+          setTimeout(updateCount, 20);
         } else {
           counter.innerText = target.toLocaleString();
         }
@@ -623,58 +1387,16 @@ body {
     });
   };
 
-  // Trigger when in viewport
   let started = false;
   window.addEventListener("scroll", () => {
     const section = document.getElementById("experience");
     const rect = section.getBoundingClientRect();
-    if (!started && rect.top < window.innerHeight && rect.bottom >= 0) {
+    if(!started && rect.top < window.innerHeight && rect.bottom >= 0) {
       animateCounters();
       started = true;
     }
   });
 </script>
-
-<style>
-  #experience h2 {
-    font-size: 2.5rem;
-  }
-  #experience .btn {
-    border-radius: 30px;
-    transition: all 0.3s ease;
-  }
-  #experience .btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(13,110,253,0.6);
-  }
-  #experience img {
-    transition: transform 0.5s ease, box-shadow 0.5s ease;
-  }
-  #experience img:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 30px rgba(13,110,253,0.5);
-  }
-  /* Floating image effect */
-  .floating {
-    animation: float 6s ease-in-out infinite;
-  }
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-  }
-  /* Stats glowing effect */
-  .stat-box {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: all 0.3s ease;
-  }
-  .stat-box:hover {
-    background: rgba(13,110,253,0.1);
-    box-shadow: 0 0 20px rgba(13,110,253,0.5);
-    transform: scale(1.05);
-  }
-</style>
 
 
 <!-- Partners Section -->
@@ -754,34 +1476,157 @@ body {
 
 
   <!-- Testimonials -->
-  <section class="container py-5">
-    <h2 class="text-center mb-5">What Our Investors Say</h2>
-    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner text-center">
-        <div class="carousel-item active">
-          <p class="testimonial">"Montracorp has changed my financial life. The returns are amazing and reliable."</p>
-          <p class="testimonial-author">- Sarah L.</p>
+  
+  <!-- Testimonials Section -->
+<section class="py-5 testimonials-section">
+  <div class="container">
+    <h2 class="section-title text-center mb-4" data-aos="fade-up">What Our Investors Say</h2>
+    <p class="text-center text-secondary mb-5" data-aos="fade-up" data-aos-delay="100">
+      Hear from our satisfied investors worldwide
+    </p>
+
+    <!-- Bootstrap Carousel -->
+    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+      <div class="carousel-inner">
+        <!-- Testimonial items will be populated by JS -->
+      </div>
+      <!-- Carousel controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Testimonials data
+  const testimonialsData = [
+    {
+      quote: "Montracorp has completely transformed my approach to investing. The returns are consistent and the platform is incredibly user-friendly.",
+      name: "Sarah Johnson",
+      role: "Investor since 2020",
+      image: "https://randomuser.me/api/portraits/women/65.jpg"
+    },
+    {
+      quote: "The support team is exceptional. They guided me through every step and helped me maximize my returns. I've never felt more confident about my investments.",
+      name: "Michael Chen",
+      role: "Investor since 2019",
+      image: "https://randomuser.me/api/portraits/men/32.jpg"
+    },
+    {
+      quote: "I've tried several investment platforms, but Montracorp stands out with its transparency, security, and impressive returns. Highly recommended!",
+      name: "Emma Rodriguez",
+      role: "Investor since 2021",
+      image: "https://randomuser.me/api/portraits/women/44.jpg"
+    },
+    {
+      quote: "As a long-term investor, I appreciate Montracorp's consistent performance and professional approach. They've helped me grow my portfolio significantly.",
+      name: "David Wilson",
+      role: "Investor since 2018",
+      image: "https://randomuser.me/api/portraits/men/76.jpg"
+    },
+    {
+      quote: "The educational resources and market insights provided by Montracorp are invaluable. I've become a much smarter investor since joining.",
+      name: "Priya Sharma",
+      role: "Investor since 2022",
+      image: "https://randomuser.me/api/portraits/women/33.jpg"
+    }
+  ];
+
+  const carouselInner = document.querySelector('#testimonialCarousel .carousel-inner');
+
+  testimonialsData.forEach((testimonial, index) => {
+    const activeClass = index === 0 ? 'active' : '';
+    const item = document.createElement('div');
+    item.className = `carousel-item ${activeClass}`;
+    item.setAttribute('data-aos', 'fade-up');
+    item.innerHTML = `
+      <div class="d-flex flex-column align-items-center justify-content-center text-center">
+        <div class="testimonial-card animate__animated animate__fadeIn">
+          <p class="testimonial">${testimonial.quote}</p>
+          <div class="d-flex align-items-center mt-4">
+            <div class="testimonial-avatar">
+              <img src="${testimonial.image}" alt="${testimonial.name}" class="img-fluid">
+            </div>
+            <div>
+              <div class="testimonial-author">${testimonial.name}</div>
+              <div class="testimonial-role">${testimonial.role}</div>
+            </div>
+          </div>
         </div>
-        <div class="carousel-item">
-          <p class="testimonial">"Professional service and great support. Highly recommend to new investors!"</p>
-          <p class="testimonial-author">- James K.</p>
+      </div>
+    `;
+    carouselInner.appendChild(item);
+  });
+</script>
+
+
+  <!-- About Section -->
+<section id="about" class="py-5" style="background: linear-gradient(135deg, #0a0a0a, #121212);">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2 class="section-title mb-3" style="color: #0d6efd;">About Montracorp</h2>
+      <p class="text-white mx-auto" style="max-width: 700px;">
+        Montracorp is a modern investment company dedicated to helping clients achieve financial freedom. 
+        Our advanced tools, secure systems, and trusted advisors empower you to make informed decisions 
+        and grow your wealth safely.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Feature 1 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card bg-dark border-0 text-center p-4 h-100 shadow-sm hover-scale">
+          <div class="mb-3">
+            <i class="fas fa-shield-alt fa-3x text-primary"></i>
+          </div>
+          <h5 class="text-primary mb-2">Secure Investments</h5>
+          <p class="text-white mb-0">
+            Your investments are protected with industry-leading security protocols and transparency.
+          </p>
         </div>
-        <div class="carousel-item">
-          <p class="testimonial">"The calculator helped me plan long term. Montracorp is a game-changer."</p>
-          <p class="testimonial-author">- Maria R.</p>
+      </div>
+      <!-- Feature 2 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card bg-dark border-0 text-center p-4 h-100 shadow-sm hover-scale">
+          <div class="mb-3">
+            <i class="fas fa-chart-line fa-3x text-primary"></i>
+          </div>
+          <h5 class="text-primary mb-2">Smart Tools</h5>
+          <p class="text-white mb-0">
+            Advanced analytics and insights help you track, plan, and maximize your investment growth.
+          </p>
+        </div>
+      </div>
+      <!-- Feature 3 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="card bg-dark border-0 text-center p-4 h-100 shadow-sm hover-scale">
+          <div class="mb-3">
+            <i class="fas fa-users fa-3x text-primary"></i>
+          </div>
+          <h5 class="text-primary mb-2">Trusted Advisors</h5>
+          <p class="text-white mb-0">
+            Our team of experienced advisors is always ready to guide you in making informed investment decisions.
+          </p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- About -->
-  <section id="about" class="container py-5 border border-primary">
-    <h2 class="text-center mb-4">About Montracorp</h2>
-    <p class="text-center text-white">
-      Montracorp is a modern investment company dedicated to helping clients achieve financial freedom. 
-      With our advanced tools, secure systems, and trusted advisors, you can make informed decisions and grow your wealth safely.
-    </p>
-  </section>
+<style>
+  .hover-scale {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .hover-scale:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(13, 110, 253, 0.3);
+  }
+</style>
+
 
   <!-- FAQ Section -->
 <section id="faq" class="container py-5">
@@ -950,28 +1795,425 @@ body {
 
 
   <!-- Contact -->
-  <section id="contact" class="container py-5">
-    <h2 class="text-center mb-4">Contact Us</h2>
-    <form class="row g-3 justify-content-center">
-      <div class="col-md-5">
-        <input type="text" class="form-control" placeholder="Your Name" required>
+ <!-- Contact Section -->
+<section id="contact" class="py-5" style="background: #0a0a0a;">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2 class="section-title text-primary mb-3">Contact Us</h2>
+      <p class="text-secondary mb-0">Have questions? Reach out to our support team and get assistance promptly.</p>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+        <div class="card p-5 glass-card shadow-lg border-0">
+          <form id="contactForm" class="contact-form needs-validation" novalidate>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label for="name" class="form-label text-white">Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
+                <div class="invalid-feedback">Please provide your name.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="email" class="form-label text-white">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required>
+                <div class="invalid-feedback">Please provide a valid email.</div>
+              </div>
+              <div class="col-12">
+                <label for="subject" class="form-label text-white">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
+                <div class="invalid-feedback">Please provide a subject.</div>
+              </div>
+              <div class="col-12">
+                <label for="message" class="form-label text-white">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Type your message here..." required></textarea>
+                <div class="invalid-feedback">Please provide a message.</div>
+              </div>
+              <div class="col-12 text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg btn-glow">Send Message</button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="col-md-5">
-        <input type="email" class="form-control" placeholder="Your Email" required>
-      </div>
-      <div class="col-md-10">
-        <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
-      </div>
-      <div class="col-md-10">
-        <button class="btn btn-primary w-100">Send Message</button>
-      </div>
-    </form>
-  </section>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  border: 1px solid rgba(13, 110, 253, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(13, 110, 253, 0.5);
+}
+
+/* Form Control Dark Theme */
+.contact-form .form-control {
+  background-color: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #ffffff;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+.contact-form .form-control::placeholder {
+  color: #b0b0b0;
+}
+.contact-form .form-control:focus {
+  background-color: rgba(255,255,255,0.1);
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  color: #ffffff;
+}
+
+/* Validation */
+.contact-form .invalid-feedback { font-size: 0.875rem; }
+
+/* Button Glow */
+.btn-glow {
+  border-radius: 50px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+.btn-glow:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #0d6efd, 0 0 40px #0d6efd;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .glass-card { padding: 2rem; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const contactForm = document.getElementById('contactForm');
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!contactForm.checkValidity()) {
+      e.stopPropagation();
+      contactForm.classList.add('was-validated');
+      return;
+    }
+
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      await new Promise(r => setTimeout(r, 1200)); // simulate API
+      showAlert('Message sent successfully! We will get back to you soon.', 'success');
+      contactForm.reset();
+      contactForm.classList.remove('was-validated');
+    } catch {
+      showAlert('Error sending your message. Please try again.', 'danger');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+
+  function showAlert(msg, type) {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} mt-3 text-center`;
+    alert.textContent = msg;
+    contactForm.prepend(alert);
+    setTimeout(() => alert.remove(), 5000);
+  }
+});
+</script>
+
 
   <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Montracorp. All rights reserved.</p>
+ 
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --primary-dark: #0a58ca;
+      --secondary: #00ffcc;
+      --dark-bg: #0a0a0a;
+      --dark-card: #121212;
+      --dark-border: #222;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+    }
+    
+    /* ... (other CSS styles remain the same) ... */
+    
+    /* Footer Styles */
+    .site-footer {
+      background: #0a0a0a;
+      padding: 60px 0 30px;
+      position: relative;
+    }
+
+    .site-footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+
+    .footer-links h5 {
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+      padding-left: 12px;
+    }
+
+    .footer-links a::before {
+      content: '→';
+      position: absolute;
+      left: -15px;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover::before {
+      opacity: 1;
+      left: -5px;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-icons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .social-icons a:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+      color: white;
+    }
+
+    /* Back to Top Button */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+    }
+
+    /* Responsive adjustments for footer */
+    @media (max-width: 768px) {
+      .site-footer {
+        padding: 40px 0 20px;
+      }
+      
+      .footer-links {
+        margin-bottom: 30px;
+      }
+      
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+
+  <!-- ... (other HTML content) ... -->
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <h4 class="text-white mb-4">Montracorp</h4>
+          <p class="text-secondary">Smart investments for a secure future. Join thousands of investors who trust us with their financial goals.</p>
+          <div class="social-icons mt-4">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4 footer-links">
+          <h5>Quick Links</h5>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#plans">Plans</a></li>
+            <li><a href="#calculator">Calculator</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-4 footer-links">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Disclaimer</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4 col-md-4">
+          <h5>Contact Info</h5>
+          <ul class="list-unstyled text-secondary">
+            <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Financial Street, New York, NY</li>
+            <li class="mb-2"><i class="fas fa-phone me-2"></i> +1 (234) 567-8900</li>
+            <li class="mb-2"><i class="fas fa-envelope me-2"></i> support@montracorp.com</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-5 bg-secondary">
+      <div class="text-center text-secondary">
+        <p>&copy; 2025 Montracorp. All rights reserved.</p>
+      </div>
+    </div>
   </footer>
+
+  <!-- ... (rest of HTML content) ... -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 100
+    });
+
+    // ... (other JavaScript code) ...
+    
+    // Footer functionality
+    function initFooter() {
+      // Back to top button functionality
+      const backToTopButton = document.createElement('a');
+      backToTopButton.href = '#';
+      backToTopButton.className = 'back-to-top';
+      backToTopButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
+      backToTopButton.setAttribute('aria-label', 'Back to top');
+      document.body.appendChild(backToTopButton);
+
+      // Show/hide back to top button based on scroll position
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          backToTopButton.classList.add('visible');
+        } else {
+          backToTopButton.classList.remove('visible');
+        }
+      });
+
+      // Smooth scroll to top when clicked
+      backToTopButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+
+      // Current year for copyright
+      const copyrightElement = document.querySelector('.site-footer .text-center p');
+      if (copyrightElement) {
+        const currentYear = new Date().getFullYear();
+        copyrightElement.innerHTML = `&copy; ${currentYear} Montracorp. All rights reserved.`;
+      }
+
+      // Smooth scrolling for footer links
+      document.querySelectorAll('.footer-links a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+
+      // Footer reveal animation
+      const footer = document.querySelector('.site-footer');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            footer.classList.add('footer-visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      observer.observe(footer);
+    }
+
+    // Initialize footer when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      // ... other initialization code ...
+      initFooter();
+    });
+  </script>
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -1046,6 +2288,9 @@ setInterval(loadCryptoPrices, 60000);
 
   </script>
 
+<script>
+  
+</script>
   
 </body>
 </html>
