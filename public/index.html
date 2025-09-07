@@ -662,12 +662,12 @@ body {
 
   <!-- Hero -->
   <!-- Hero Section -->
-<section class="hero d-flex align-items-center text-white">
+<section class="hero d-flex align-items-center text-white position-relative">
   <div class="container">
     <div class="row align-items-center">
       
       <!-- Left Column -->
-      <div class="col-lg-6 col-md-12 text-center text-lg-start">
+      <div class="col-lg-6 col-md-12 text-center text-lg-start position-relative" style="z-index: 10;">
         <h1 class="display-4 fw-bold mb-3">
           The right place for <span class="text-primary">online trading</span> on the financial markets
         </h1>
@@ -680,17 +680,18 @@ body {
           <a href="login.html" class="btn btn-outline-light btn-lg px-4">Sign In</a>
         </div>
       </div>
-      
+
       <!-- Right Column -->
       <div class="col-lg-6 col-md-12 mt-5 mt-lg-0 text-center position-relative">
         <div class="chart-container">
-          <img src="assets/chy.png" alt="Trading Chart" class="img-fluid floating-chart">
+          <img src="assets/chy.png" alt="Trading Chart" class="img-fluid floating-chart" style="max-width: 100%; height: auto;">
         </div>
       </div>
 
     </div>
   </div>
 </section>
+
 
 <!-- Hero Section CSS -->
 <style>
@@ -732,6 +733,11 @@ body {
   background: #fff;
   color: #000;
   transform: translateY(-2px);
+}
+
+.hero a.btn {
+  position: relative;
+  z-index: 20;
 }
 
 .chart-container {
