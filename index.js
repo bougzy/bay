@@ -8,11 +8,14 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const path = require("path");
 const cors = require("cors");
+const WebSocket = require('ws');
+const http = require('http');
 
 // ================== APP SETUP ==================
 const app = express();
 app.use(express.json());
 app.use(cors());
+const server = http.createServer(app);
 
 // ================== DB CONNECTION ==================
 mongoose.connect(process.env.MONGO_URI || "mongodb+srv://montracorp:montracorp@montracorp.ypvutxx.mongodb.net/montracorp", {
@@ -88,6 +91,7 @@ const transactionSchema = new mongoose.Schema({
   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
   adminNote: String,
   proof: String,
+  processed: { type: Boolean, default: false } // Add this field
 }, { timestamps: true });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
@@ -318,19 +322,117 @@ const listTransactions = async (req, res) => {
   } catch (e) { res.status(500).json({ message: e.message }); }
 };
 
+// const approveDeposit = async (req, res) => {
+//   try {
+//     const { transactionId } = req.params;
+//     const tx = await Transaction.findById(transactionId);
+//     if (!tx || tx.type !== "deposit") return res.status(404).json({ message: "Deposit not found" });
+//     if (tx.status === "approved") return res.status(400).json({ message: "Already approved" });
+//     tx.status = "approved"; await tx.save();
+//     const user = await User.findById(tx.user);
+//     user.walletBalance += tx.amount; await user.save();
+//     await sendNotification(user._id, "Deposit Approved", `Your deposit of $${tx.amount} was approved.`, "deposit");
+//     res.json({ message: "Deposit approved", transaction: tx, walletBalance: user.walletBalance });
+//   } catch (e) { res.status(500).json({ message: e.message }); }
+// };
+
+
+const wss = new WebSocket.Server({ server });
+
+// Store connected clients
+const clients = new Map();
+
+// WebSocket connection handling
+wss.on('connection', (ws, req) => {
+  // Extract token from query string
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const token = url.searchParams.get('token');
+  
+  if (!token) {
+    ws.close();
+    return;
+  }
+  
+  try {
+    // Verify token and get user ID
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "supersecretjwtkey");
+    const userId = decoded.id;
+    
+    // Store connection with user ID
+    clients.set(userId, ws);
+    
+
+     // Send initial balance update
+    User.findById(userId).then(user => {
+      if (user) {
+        ws.send(JSON.stringify({
+          type: 'BALANCE_UPDATE',
+          walletBalance: user.walletBalance,
+          message: 'Connected successfully'
+        }));
+      }
+    });
+
+
+
+    // Handle connection close
+    ws.on('close', () => {
+      clients.delete(userId);
+    });
+    
+    // Handle errors
+     ws.on('error', (error) => {
+      console.error('WebSocket error:', error);
+      clients.delete(userId);
+    });
+    
+  } catch (error) {
+    console.error('WebSocket authentication error:', error);
+    ws.close();
+  }
+});
+
+// Function to send updates to a specific user
+function sendUserUpdate(userId, data) {
+  const ws = clients.get(userId);
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(data));
+  }
+}
+
 const approveDeposit = async (req, res) => {
   try {
     const { transactionId } = req.params;
     const tx = await Transaction.findById(transactionId);
     if (!tx || tx.type !== "deposit") return res.status(404).json({ message: "Deposit not found" });
     if (tx.status === "approved") return res.status(400).json({ message: "Already approved" });
-    tx.status = "approved"; await tx.save();
+    
+    tx.status = "approved";
+    tx.processed = false; // Set to false so the user endpoint can process it
+    await tx.save();
+    
     const user = await User.findById(tx.user);
-    user.walletBalance += tx.amount; await user.save();
+    
+    // Send real-time update to the user
+    sendUserUpdate(tx.user.toString(), {
+      type: 'BALANCE_UPDATE',
+      walletBalance: user.walletBalance, // Current balance (not updated yet)
+      transaction: tx,
+      message: `Your deposit of $${tx.amount} has been approved and will be added to your balance shortly.`
+    });
+    
     await sendNotification(user._id, "Deposit Approved", `Your deposit of $${tx.amount} was approved.`, "deposit");
-    res.json({ message: "Deposit approved", transaction: tx, walletBalance: user.walletBalance });
-  } catch (e) { res.status(500).json({ message: e.message }); }
+    
+    res.json({ 
+      message: "Deposit approved", 
+      transaction: tx,
+      note: "The amount will be added to the user's balance when they check for approved deposits."
+    });
+  } catch (e) { 
+    res.status(500).json({ message: e.message }); 
+  }
 };
+
 
 const rejectDeposit = async (req, res) => {
   try {
@@ -568,19 +670,63 @@ app.get("/api/user/transactions", protect, async (req, res) => {
   }
 });
 app.get("/api/user/referrals", protect, getMyReferrals);
-app.post("/api/deposits", protect, async (req, res) => {
+// app.post("/api/deposits", protect, async (req, res) => {
+//   try {
+//     const { amount } = req.body;
+    
+//     if (!amount || amount <= 0) {
+//       return res.status(400).json({ message: "Invalid deposit amount" });
+//     }
+    
+//     const transaction = await Transaction.create({
+//       user: req.user._id,
+//       type: "deposit",
+//       amount: parseFloat(amount),
+//       status: "pending"
+//     });
+    
+//     await sendNotification(
+//       req.user._id,
+//       "Deposit Submitted",
+//       `Your deposit of $${amount} has been submitted for approval.`,
+//       "deposit"
+//     );
+    
+//     res.json({ 
+//       message: "Deposit submitted for approval", 
+//       transaction 
+//     });
+//   } catch (e) {
+//     res.status(500).json({ message: e.message });
+//   }
+// });
+
+// Add multer for file uploads at the top of your server file
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
+// ... existing code ...
+
+// Update the deposit route to handle file uploads
+app.post("/api/deposits", protect, upload.single('proof'), async (req, res) => {
   try {
     const { amount } = req.body;
+    const proofFile = req.file;
     
     if (!amount || amount <= 0) {
       return res.status(400).json({ message: "Invalid deposit amount" });
+    }
+    
+    if (!proofFile) {
+      return res.status(400).json({ message: "Proof of payment is required" });
     }
     
     const transaction = await Transaction.create({
       user: req.user._id,
       type: "deposit",
       amount: parseFloat(amount),
-      status: "pending"
+      status: "pending",
+      proof: proofFile.filename // Store the filename in the database
     });
     
     await sendNotification(
@@ -598,6 +744,9 @@ app.post("/api/deposits", protect, async (req, res) => {
     res.status(500).json({ message: e.message });
   }
 });
+
+// ... rest of the server code ...
+
 app.post("/api/withdrawals", protect, async (req, res) => {
   try {
     const { amount } = req.body;
@@ -790,6 +939,67 @@ app.put("/api/admin/users/:userId/block", adminAuth, async (req, res) => {
     res.status(500).json({ message: e.message });
   }
 });
+
+// ================== NEW ENDPOINT: CHECK APPROVED DEPOSITS ==================
+app.get("/api/user/check-approved-deposits", protect, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    // Find all approved deposits that haven't been processed yet
+    const approvedDeposits = await Transaction.find({
+      user: userId,
+      type: "deposit",
+      status: "approved",
+      processed: { $ne: true } // Look for deposits that haven't been marked as processed
+    });
+    
+    let totalApprovedAmount = 0;
+    let processedDeposits = [];
+    
+    // Process each approved deposit
+    for (const deposit of approvedDeposits) {
+      // Update user's wallet balance
+      const user = await User.findById(userId);
+      user.walletBalance += deposit.amount;
+      await user.save();
+      
+      // Mark deposit as processed
+      deposit.processed = true;
+      await deposit.save();
+      
+      totalApprovedAmount += deposit.amount;
+      processedDeposits.push(deposit);
+      
+      // Send real-time update if WebSocket is connected
+      sendUserUpdate(userId.toString(), {
+        type: 'BALANCE_UPDATE',
+        walletBalance: user.walletBalance,
+        transaction: deposit,
+        message: `Deposit of $${deposit.amount} has been approved and added to your balance`
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: processedDeposits.length > 0 
+        ? `Processed ${processedDeposits.length} approved deposits totaling $${totalApprovedAmount}`
+        : 'No new approved deposits found',
+      processedCount: processedDeposits.length,
+      totalAmount: totalApprovedAmount,
+      walletBalance: req.user.walletBalance + totalApprovedAmount,
+      deposits: processedDeposits
+    });
+    
+  } catch (e) {
+    res.status(500).json({ 
+      success: false,
+      message: e.message 
+    });
+  }
+});
+
+
+
 app.get("/api/admin/transactions", adminAuth, listTransactions);
 app.put("/api/admin/deposit/:transactionId/approve", adminAuth, approveDeposit);
 app.put("/api/admin/deposit/:transactionId/reject", adminAuth, rejectDeposit);
@@ -826,6 +1036,8 @@ app.get("/api/admin/dashboard-stats", adminAuth, async (req, res) => {
   }
 });
 
+
+
 // Serve frontend last, only for non-API routes
 app.use(express.static(path.join(__dirname, "public")));
 app.get(/^\/(?!api).*/, (req, res) => {
@@ -833,5 +1045,5 @@ app.get(/^\/(?!api).*/, (req, res) => {
 });
 
 // ================== START SERVER ==================
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

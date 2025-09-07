@@ -929,15 +929,6 @@
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
-            <div class="stat-value" id="totalProfit">$0.00</div>
-            <div class="stat-label">Total Profit
-              <button class="btn btn-outline" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.7rem;" onclick="refreshTotalProfit()">
-                <i class="fas fa-sync-alt"></i> Refresh
-              </button>
-            </div>
-          </div>
-          <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
             <div class="stat-value" id="totalWithdrawals">$0.00</div>
             <div class="stat-label">Total Withdrawals
@@ -1130,9 +1121,6 @@
       const user = await authFetch('/me');
       window.currentUser = user; // Store for reference
       updateBalanceDisplay(user);
-      
-      // Load total profit
-      await loadTotalProfit();
     } catch(e) {
       console.error('Error loading user:', e);
     }
@@ -1142,41 +1130,6 @@
     document.getElementById('walletBalance').innerText = `$${parseFloat(user.walletBalance || 0).toFixed(2)}`;
     document.getElementById('totalDeposits').innerText = `$${parseFloat(user.totalDeposits || 0).toFixed(2)}`;
     document.getElementById('totalWithdrawals').innerText = `$${parseFloat(user.totalWithdrawals || 0).toFixed(2)}`;
-  }
-  
-  // Function to load total profit
-  async function loadTotalProfit() {
-    try {
-      const profits = await authFetch('/user/profits');
-      const totalProfit = profits.reduce((sum, profit) => sum + parseFloat(profit.amount || 0), 0);
-      document.getElementById('totalProfit').innerText = `$${totalProfit.toFixed(2)}`;
-    } catch(e) {
-      console.error('Error loading total profit:', e);
-      document.getElementById('totalProfit').innerText = '$0.00';
-    }
-  }
-  
-  // Function to refresh total profit
-  async function refreshTotalProfit() {
-    try {
-      const btn = document.querySelector('button[onclick="refreshTotalProfit()"]');
-      const originalHtml = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      btn.disabled = true;
-      
-      await loadTotalProfit();
-      
-      showNotification('Total profit refreshed successfully', 'success');
-    } catch(e) {
-      console.error('Error refreshing total profit:', e);
-      showNotification('Error refreshing total profit', 'error');
-    } finally {
-      const btn = document.querySelector('button[onclick="refreshTotalProfit()"]');
-      if (btn) {
-        btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-        btn.disabled = false;
-      }
-    }
   }
   
   // Function to refresh total deposits
@@ -1273,6 +1226,7 @@
     }
   }
 
+
   function setupDepositForm() {
     const form = document.getElementById('depositForm');
     if(!form) return;
@@ -1336,6 +1290,8 @@
     });
   }
 
+
+  
   // Add WebSocket connection at the top of your script
   let socket = null;
   
@@ -1376,19 +1332,6 @@
           showNotification(data.message || `Balance updated to $${parseFloat(data.walletBalance || 0).toFixed(2)}`, 'success');
           
           // Reload transactions to show the updated status
-          loadTransactions();
-          renderTransactionChart();
-        }
-        
-        // Handle profit updates
-        if (data.type === 'PROFIT_UPDATE') {
-          // Update total profit display
-          document.getElementById('totalProfit').innerText = `$${parseFloat(data.totalProfit || 0).toFixed(2)}`;
-          
-          // Show notification
-          showNotification(data.message || `Profit updated to $${parseFloat(data.totalProfit || 0).toFixed(2)}`, 'success');
-          
-          // Reload transactions to show the new profit transaction
           loadTransactions();
           renderTransactionChart();
         }
@@ -1979,52 +1922,66 @@
     }
   }
 
+
   // Add this function to check for approved deposits
-  async function checkApprovedDeposits() {
-    try {
-      const btn = document.querySelector('button[onclick="checkApprovedDeposits()"]');
-      const originalHtml = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      btn.disabled = true;
+    async function checkApprovedDeposits() {
+  try {
+    const btn = document.querySelector('button[onclick="checkApprovedDeposits()"]');
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    
+    const response = await authFetch('/user/check-approved-deposits');
+    
+    if (response.success && response.processedCount > 0) {
+      // Update all balance displays
+      document.getElementById('walletBalance').innerText = `$${parseFloat(response.walletBalance || 0).toFixed(2)}`;
+      document.getElementById('totalDeposits').innerText = `$${parseFloat(response.totalDeposits || 0).toFixed(2)}`;
+      document.getElementById('totalWithdrawals').innerText = `$${parseFloat(response.totalWithdrawals || 0).toFixed(2)}`;
       
-      const response = await authFetch('/user/check-approved-deposits');
-      
-      if (response.success && response.processedCount > 0) {
-        // Update all balance displays
-        document.getElementById('walletBalance').innerText = `$${parseFloat(response.walletBalance || 0).toFixed(2)}`;
-        document.getElementById('totalDeposits').innerText = `$${parseFloat(response.totalDeposits || 0).toFixed(2)}`;
-        document.getElementById('totalWithdrawals').innerText = `$${parseFloat(response.totalWithdrawals || 0).toFixed(2)}`;
-        
-        // If we have the user data, update it too
-        if (window.currentUser) {
-          window.currentUser.walletBalance = response.walletBalance;
-          window.currentUser.totalDeposits = response.totalDeposits;
-          window.currentUser.totalWithdrawals = response.totalWithdrawals;
-        }
-        
-        // Show success notification
-        showNotification(response.message, 'success');
-        
-        // Reload transactions to show updated status
-        loadTransactions();
-        renderTransactionChart();
-      } else if (response.success) {
-        showNotification('No new approved deposits found', 'info');
+      // If we have the user data, update it too
+      if (window.currentUser) {
+        window.currentUser.walletBalance = response.walletBalance;
+        window.currentUser.totalDeposits = response.totalDeposits;
+        window.currentUser.totalWithdrawals = response.totalWithdrawals;
       }
       
-      return response;
-    } catch (e) {
-      console.error('Error checking approved deposits:', e);
-      showNotification('Error checking for approved deposits', 'error');
-      return { success: false, message: e.message };
-    } finally {
-      const btn = document.querySelector('button[onclick="checkApprovedDeposits()"]');
-      if (btn) {
-        btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-        btn.disabled = false;
-      }
+      // Show success notification
+      showNotification(response.message, 'success');
+      
+      // Reload transactions to show updated status
+      loadTransactions();
+      renderTransactionChart();
+    } else if (response.success) {
+      showNotification('No new approved deposits found', 'info');
+    }
+    
+    return response;
+  } catch (e) {
+    console.error('Error checking approved deposits:', e);
+    showNotification('Error checking for approved deposits', 'error');
+    return { success: false, message: e.message };
+  } finally {
+    const btn = document.querySelector('button[onclick="checkApprovedDeposits()"]');
+    if (btn) {
+      btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+      btn.disabled = false;
     }
   }
+}
+
+// Update the auto-refresh function to also check for approved deposits
+function startAutoRefresh() {
+  // Clear existing intervals
+  refreshIntervals.forEach(interval => clearInterval(interval));
+  refreshIntervals = [];
+  
+  // Set up new intervals - more frequent checks for approved deposits
+  refreshIntervals.push(setInterval(loadUser, 10000)); // 10 seconds
+  refreshIntervals.push(setInterval(checkApprovedDeposits, 15000)); // 15 seconds
+  refreshIntervals.push(setInterval(loadTransactions, 30000)); // 30 seconds
+  refreshIntervals.push(setInterval(loadNotifications, 60000)); // 1 minute
+}
 
   // ---------------- AUTO REFRESH ----------------
   let refreshIntervals = [];
@@ -2034,10 +1991,9 @@
     refreshIntervals.forEach(interval => clearInterval(interval));
     refreshIntervals = [];
     
-    // Set up new intervals - more frequent checks for approved deposits
-    refreshIntervals.push(setInterval(loadUser, 10000)); // 10 seconds
-    refreshIntervals.push(setInterval(checkApprovedDeposits, 15000)); // 15 seconds
-    refreshIntervals.push(setInterval(loadTransactions, 30000)); // 30 seconds
+    // Set up new intervals
+    refreshIntervals.push(setInterval(loadUser, 30000)); // 30 seconds
+    refreshIntervals.push(setInterval(loadTransactions, 60000)); // 1 minute
     refreshIntervals.push(setInterval(loadNotifications, 60000)); // 1 minute
   }
 
